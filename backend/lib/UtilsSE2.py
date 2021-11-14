@@ -84,7 +84,18 @@ class LinkedQueue(object):
 
   # 취소가능한 것이 확인된 경우 해당 노드를 찾아 분리한다.
   def detach(self, ) -> bool:
-    pass
+    p_Curs = self._headPoint
+    if self.check_cancellable(noCancel) == False:
+      return False
+    else:
+      while (p_Curs.nextLink):
+        if noCancel in p_Curs.nextLink.data.keys():
+          temp = p_Curs.nextLink
+          p_Curs.nextLink = p_Curs.nextLink.nextLink
+          del temp
+        else:
+          p_Curs = p_Curs.nextLink
+    return True
 
   # 고객이 취소 요청을 보낼 시 호출되는 함수
   # Params
