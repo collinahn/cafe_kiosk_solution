@@ -72,7 +72,6 @@ class LinkedQueue(object):
     p_Curs: Node = self._headPoint
     count = 0
     while(p_Curs):
-      print(p_Curs.data.keys())
       if nOrderNo in p_Curs.data.keys():
         break
       else:
