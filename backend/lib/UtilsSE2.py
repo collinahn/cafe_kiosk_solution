@@ -68,7 +68,16 @@ class LinkedQueue(object):
   # 즉 앞부터 확인하여 4개째 찾는 주문번호가 나오지 않는다면 true를 리턴하고 그게 아니면 false를 리턴한다.
   # 주문번호는 node.data(dict형 자료)의 key값이다.
   def check_cancellable(self, nOrderNo: int) -> bool:
-    pass
+    c_available = None
+    p_Curs: Node = self._headPoint
+    for i in range(4):
+      if nOrderNo in p_Curs.data.keys():
+        c_available = False
+        return c_available
+      else:
+        p_Curs = p_Curs.nextLink
+    c_available = True
+    return c_available
 
   # 취소가능한 것이 확인된 경우 해당 노드를 찾아 분리한다.
   def detach(self, ) -> bool:
