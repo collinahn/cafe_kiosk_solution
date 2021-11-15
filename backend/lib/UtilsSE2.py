@@ -103,10 +103,12 @@ class LinkedQueue(object):
   # 취소 가능 여부를 확인하고(check_cancellable()) 취소할 수 있으면 해당 노드를 삭제(self.detach())하고 true를 리턴.
   # 취소할 수 없으면 false를 리턴한다.
   def cancel_order(self, nOrderNo: int) -> bool:
-    pass
-
-
-
+    if self.check_cancellable(nOrderNo) == True:
+      self.detach(nOrderNo)
+      return True
+    else:
+      return False
+ 
 if __name__ == "__main__":
   lq = LinkedQueue()
 
