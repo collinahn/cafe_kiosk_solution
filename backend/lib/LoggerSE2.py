@@ -31,8 +31,7 @@ log.DEBUG("msg")
 import os
 import logging
 import logging.handlers
-# from . 
-import constantsSE2 as const
+from . import constantsSE2 as const
 
 class Logger:
 
