@@ -2,7 +2,7 @@
 
 # 2021.10.28 created by 안태영: Linked List 추가, 기본 구조 완성
 
-
+from .LoggerSE2 import Logger
 
 class Node(object):
   def __init__(self, dData: dict) -> None:
@@ -13,23 +13,31 @@ class LinkedQueue(object):
   __mdict_MstInstance = {}
 
   def __new__(cls, sName: str="defaultQueue"):
-      if sName in LinkedQueue.__mdict_MstInstance:
-        cls._instance = LinkedQueue.__mdict_MstInstance[sName]
+    if sName in LinkedQueue.__mdict_MstInstance:
+      cls._instance = LinkedQueue.__mdict_MstInstance[sName]
 
-      else:
-        cls._instance = super().__new__(cls)
-        LinkedQueue.__mdict_MstInstance[sName] = cls._instance
+    else:
+      cls._instance = super().__new__(cls)
+      LinkedQueue.__mdict_MstInstance[sName] = cls._instance
+      cls.logger = Logger()
+    
+    cls.logger.INFO(cls._instance)
+    return cls._instance
 
-      return cls._instance
+  def __init__(self, sName: str="defaultQueue", *args) -> None:
+    cls = type(self)
+    if not hasattr(cls, "_init"):
+      cls._init = True
 
-  def __init__(self) -> None:
-    self._headPoint = None
-    self._tailPoint = None
+      self._headPoint = None
+      self._tailPoint = None
+
+      self.logger.INFO(f"Queue {sName} init")
 
   # 연결리스트에 push
   def push(self, dData: dict) -> None:
     nd_Node = Node(dData)
-
+    
     if self._headPoint is None:
       self._headPoint = nd_Node
       self._tailPoint = nd_Node
@@ -68,33 +76,41 @@ class LinkedQueue(object):
   # 즉 앞부터 확인하여 4개째 찾는 주문번호가 나오지 않는다면 true를 리턴하고 그게 아니면 false를 리턴한다.
   # 주문번호는 node.data(dict형 자료)의 key값이다.
   def check_cancellable(self, nOrderNo: int) -> bool:
-    c_available = False
+    b_Available: bool = False
     p_Curs: Node = self._headPoint
-    count = 0
-    while(p_Curs):
+    n_Count: int = 0
+    while p_Curs:
       if nOrderNo in p_Curs.data.keys():
         break
-      else:
-        p_Curs = p_Curs.nextLink
-        count += 1
-        if count == 4:
-          c_available = True
-          break
-    return c_available
+
+      p_Curs = p_Curs.nextLink
+      n_Count += 1
+      if n_Count == 4:
+        b_Available = True
+        break
+
+    return b_Available
 
   # 취소가능한 것이 확인된 경우 해당 노드를 찾아 분리한다.
-  def detach(self, ) -> bool:
-    p_Curs = self._headPoint
-    if self.check_cancellable(noCancel) == False:
+  def detach(self, nOrderNo: int) -> bool:
+    p_Curs: Node = self._headPoint
+
+    if not self.check_cancellable(nOrderNo):
       return False
-    else:
-      while (p_Curs.nextLink):
-        if noCancel in p_Curs.nextLink.data.keys():
-          temp = p_Curs.nextLink
-          p_Curs.nextLink = p_Curs.nextLink.nextLink
-          del temp
-        else:
-          p_Curs = p_Curs.nextLink
+
+    while p_Curs.nextLink:
+      if nOrderNo in p_Curs.nextLink.data.keys():
+
+        try:
+            p_Curs.nextLink = p_Curs.nextLink.nextLink
+        except AttributeError as e:
+            p_Curs.nextLink = None
+        finally:
+            break
+
+      else:
+        p_Curs = p_Curs.nextLink
+        
     return True
 
   # 고객이 취소 요청을 보낼 시 호출되는 함수
@@ -103,12 +119,14 @@ class LinkedQueue(object):
   # 취소 가능 여부를 확인하고(check_cancellable()) 취소할 수 있으면 해당 노드를 삭제(self.detach())하고 true를 리턴.
   # 취소할 수 없으면 false를 리턴한다.
   def cancel_order(self, nOrderNo: int) -> bool:
-    if self.check_cancellable(nOrderNo) == True:
-      self.detach(nOrderNo)
-      return True
-    else:
+
+    if not self.check_cancellable(nOrderNo):
       return False
+      
+    self.detach(nOrderNo)
+    return True
  
+
 if __name__ == "__main__":
   lq = LinkedQueue()
 
@@ -133,3 +151,26 @@ if __name__ == "__main__":
 
   print(lq.to_string())
 
+
+  lq.push({11:70})
+  lq.push({12:80})
+  lq.push({13:90}) 
+  lq.push({14:70})
+  lq.push({15:80})
+  lq.push({16:90})
+  lq.push({17:70})
+  lq.push({18:80})
+  lq.push({19:90})
+
+  lq.cancel_order(9)
+  print(lq.to_string())
+  lq.cancel_order(4) # 지워지면 안됨
+  print(lq.to_string())
+  lq.cancel_order(5) # 지워지면 안됨
+  print(lq.to_string())
+  lq.cancel_order(19)
+  print(lq.to_string())
+  lq.cancel_order(18)
+  print(lq.to_string())
+  lq.cancel_order(17)
+  print(lq.to_string())
