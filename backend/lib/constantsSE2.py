@@ -32,3 +32,11 @@ LV_ERROR    = 40
 LV_CRITICAL = 50
 
 #-----------Logger--------
+
+
+
+#---------SingleOrder--------
+
+EXPECTED_TIME_MUL = 1.2
+
+#---------SingleOrder--------
