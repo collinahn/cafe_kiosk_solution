@@ -13,12 +13,12 @@ class LinkedQueue(object):
   __mdict_MstInstance = {}
 
   def __new__(cls, sName: str="defaultQueue"):
-    if sName in LinkedQueue.__mdict_MstInstance:
-      cls._instance = LinkedQueue.__mdict_MstInstance[sName]
+    if sName in cls.__mdict_MstInstance:
+      cls._instance = cls.__mdict_MstInstance[sName]
 
     else:
       cls._instance = super().__new__(cls)
-      LinkedQueue.__mdict_MstInstance[sName] = cls._instance
+      cls.__mdict_MstInstance[sName] = cls._instance
       cls.logger = Logger()
     
     cls.logger.INFO(cls._instance)
@@ -57,7 +57,7 @@ class LinkedQueue(object):
 
     return dict_Data
 
-  # 자료 전체를 문자열로 리턴한다.
+ # 자료 전체를 문자열로 리턴한다.
   def to_string(self) -> str:
     p_Curs: Node = self._headPoint
     s_Data2Str: str = ""
@@ -68,6 +68,45 @@ class LinkedQueue(object):
 
     return s_Data2Str
 
+  # 자료 전체를 문자열로 리턴한다.
+  def to_json(self) -> str:
+    p_Curs: Node = self._headPoint
+    s_Data2Str: str = ""
+    while p_Curs:
+      try:
+        s_NextLine = str(list(p_Curs.data.values())[0].simplify)
+      except AttributeError as ae:
+        self.logger.ERROR(ae)
+        continue
+      except IndexError as ie:
+        self.logger.ERROR(ie)
+        continue
+
+      s_Data2Str += s_NextLine
+      
+      if p_Curs.nextLink: 
+          s_Data2Str += ","
+      p_Curs = p_Curs.nextLink
+
+    return s_Data2Str
+  
+  # 주문서 큐에서 걸리는 시간을 모두 더해 리턴한다(총 대기시간)
+  def estimate(self) -> int:
+    p_Curs: Node = self._headPoint
+    n_Ret: int = 0
+    while p_Curs:
+      try:
+        n_Ret += list(p_Curs.data.values())[0].time #조리시간 조회
+      except AttributeError as ae:
+        self.logger.ERROR(ae)
+        continue
+      except IndexError as ie:
+        self.logger.ERROR(ie)
+        continue
+
+      p_Curs = p_Curs.nextLink
+
+    return n_Ret
 
   # **주의: self._headPoint는 값이 변경되면 안됩니다. to_string의 경우처럼 커서에 값을 복사해서 사용하세요
 
@@ -75,7 +114,7 @@ class LinkedQueue(object):
   # 취소할 수 있는 상황: 주문이 들어간 순서대로 확인하였을 때 5번째 이상인 경우
   # 즉 앞부터 확인하여 4개째 찾는 주문번호가 나오지 않는다면 true를 리턴하고 그게 아니면 false를 리턴한다.
   # 주문번호는 node.data(dict형 자료)의 key값이다.
-  def check_cancellable(self, nOrderNo: int) -> bool:
+  def _check_cancellable(self, nOrderNo: int) -> bool:
     b_Available: bool = False
     p_Curs: Node = self._headPoint
     n_Count: int = 0
@@ -92,11 +131,8 @@ class LinkedQueue(object):
     return b_Available
 
   # 취소가능한 것이 확인된 경우 해당 노드를 찾아 분리한다.
-  def detach(self, nOrderNo: int) -> bool:
+  def _detach(self, nOrderNo: int) -> bool:
     p_Curs: Node = self._headPoint
-
-    if not self.check_cancellable(nOrderNo):
-      return False
 
     while p_Curs.nextLink:
       if nOrderNo in p_Curs.nextLink.data.keys():
@@ -120,11 +156,15 @@ class LinkedQueue(object):
   # 취소할 수 없으면 false를 리턴한다.
   def cancel_order(self, nOrderNo: int) -> bool:
 
-    if not self.check_cancellable(nOrderNo):
+    if not self._check_cancellable(nOrderNo):
       return False
       
-    self.detach(nOrderNo)
-    return True
+    return self._detach(nOrderNo)
+
+  # 직원이 완료/취소할 시 호출되는 함수
+  # 고객이 호출될 때와는 다르게 취소 조건을 따지지 않는다.
+  def abandon_order(self, nOrderNo: int) -> bool:
+      return self._detach(nOrderNo)
  
 
 if __name__ == "__main__":
@@ -137,7 +177,7 @@ if __name__ == "__main__":
   lq.push({5:50})
   lq.push({6:60})
 
-  print(f"구현 이후 false가 나와야 함 = {lq.check_cancellable(4)}")
+  print(f"구현 이후 false가 나와야 함 = {lq._check_cancellable(4)}")
   lq.push({7:70})
   lq.push({8:80})
   lq.push({9:90})
@@ -147,7 +187,7 @@ if __name__ == "__main__":
   lq.pull()
   lq.pull()
 
-  print(f"구현 이후 true가 나와야 함 = {lq.check_cancellable(9)}")
+  print(f"구현 이후 true가 나와야 함 = {lq._check_cancellable(9)}")
 
   print(lq.to_string())
 
@@ -167,6 +207,8 @@ if __name__ == "__main__":
   lq.cancel_order(4) # 지워지면 안됨
   print(lq.to_string())
   lq.cancel_order(5) # 지워지면 안됨
+  print(lq.to_string())
+  lq._detach(5)
   print(lq.to_string())
   lq.cancel_order(19)
   print(lq.to_string())

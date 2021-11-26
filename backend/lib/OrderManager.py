@@ -67,14 +67,25 @@ class OrderManager(object):
     # return값
     # True: 삭제 완료
     # False: 주문이 완료가 임박하여 삭제 불가 
-    def cancel_order(self, nOrderNo: int) -> bool:
+    def cancel_order_guest(self, nOrderNo: int) -> bool:
 
-        return self.iq_Queue.cancel_order(nOrderNo)
+        self.iq_Queue.cancel_order(nOrderNo)
 
+        return True
+
+    # 직원이 주문 취소시    
+    def cancel_order_staff(self, nOrderNo: int) -> bool:
+
+        self.iq_Queue.abandon_order(nOrderNo)
     
+        return True
+
+    # 직원이 주문 완료시
     def complete_order(self, nOrderNo: int) -> bool:
 
-        pass #cancel_order같은 놈을 만들어야함
+        self.iq_Queue.abandon_order(nOrderNo)
+        
+        return True
 
 
 
@@ -115,4 +126,6 @@ if __name__ == "__main__":
     om.push_order((order005, order006)) # 2번 주문서
 
     lq = LinkedQueue()
-    print(lq.to_string())
+    print(lq.to_json()) #json
+
+    print(lq.estimate()) #조리시간 조회
