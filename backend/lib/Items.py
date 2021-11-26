@@ -12,11 +12,12 @@
 # 
 #
 
-from .LoggerSE2 import Logger
+from backend.lib.LoggerSE2 import Logger
 
 class Items(object):
-    __mdct_MstInstance: dict = {} # {"상품코드":해당 인스턴스}
-    __mset_MstCode: set = set()      # 초기화 기록용
+    __mdct_MstInstance: dict[str, object] = {} # {"상품코드":해당 인스턴스}
+    __mset_MstCode: set[str] = set() # 초기화 기록용
+    __mset_MstCategory: set[str] = set() # 상품코드 추적
 
     def __new__(cls, sItemCode: str, *args):
         if sItemCode in Items.__mdct_MstInstance:
@@ -50,11 +51,17 @@ class Items(object):
             self.logger.INFO(f"Item {sItemCode} init")
 
             cls.__mset_MstCode.add(sItemCode)
+            cls.__mset_MstCategory.add(sCategory) # 카테고리 추적
 
     @classmethod
     def get_all(cls) -> dict:
         # 멤버 변수임을 주의
         return cls.__mdct_MstInstance
+
+    @classmethod
+    def get_categories(cls) -> set:
+        # 보유중인 카테고리를 확인
+        return cls.__mset_MstCategory
 
     @property
     def code(self) -> str:
@@ -76,7 +83,8 @@ class Items(object):
     def time(self) -> int:
         return self._n_Time
 
-
+# 수량정보는 Items4Order인스턴스 참조.
+# 나머지 정보는 내부 변수인 Item 인스턴스를 참조하여 확인. 
 class Items4Order(object):
     def __init__(self, sItemCode: str, \
                         nQuantity: int) -> None:
