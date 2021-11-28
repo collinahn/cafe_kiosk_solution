@@ -13,6 +13,7 @@ from backend.lib.Items import Items4Order
 from backend.lib.LoggerSE2 import Logger
 from backend.lib.SingleOrder import SingleOrder
 from backend.lib.UtilsSE2 import LinkedQueue
+import backend.lib.UtilsSE2 as utils
 
 class OrderManager(object):
     def __new__(cls):
@@ -31,15 +32,9 @@ class OrderManager(object):
             # 주문 번호 카운트
             self.__in_OrderCount: int = 0  
             # 주문 번호를 하루 단위로 초기화하기 위해
-            self.__is_DateLastCount: str = self.get_today_YMD()
+            self.__is_DateLastCount: str = utils.get_today_YMD()
 
             self.logger.INFO("OrderManager init")
-
-
-    #년 월 일 형식으로 날짜 구한다 "20211126"
-    @staticmethod
-    def get_today_YMD():
-        return datetime.now().strftime("%Y%m%d")
 
 
     # 주문서 생성한다
@@ -48,12 +43,12 @@ class OrderManager(object):
     # 이 형식대로 큐에 푸시됨(팩토리 패턴)
     def _make_order(self, tplOrder: tuple[Items4Order] = ()) -> dict:
         # 오늘 날짜인지 확인한다.(일마다 초기화)
-        if self.__is_DateLastCount != self.get_today_YMD():
+        if self.__is_DateLastCount != utils.get_today_YMD():
             self.__in_OrderCount = 0
-            self.__is_DateLastCount = self.get_today_YMD()
+            self.__is_DateLastCount = utils.get_today_YMD()
         
         self.__in_OrderCount += 1
-        self.__is_DateLastCount = self.get_today_YMD()
+        self.__is_DateLastCount = utils.get_today_YMD()
 
         return { self.__in_OrderCount:SingleOrder(self.__in_OrderCount, tplOrder) }
 
@@ -67,14 +62,25 @@ class OrderManager(object):
     # return값
     # True: 삭제 완료
     # False: 주문이 완료가 임박하여 삭제 불가 
-    def cancel_order(self, nOrderNo: int) -> bool:
+    def cancel_order_guest(self, nOrderNo: int) -> bool:
 
-        return self.iq_Queue.cancel_order(nOrderNo)
+        self.iq_Queue.cancel_order(nOrderNo)
 
+        return True
+
+    # 직원이 주문 취소시    
+    def cancel_order_staff(self, nOrderNo: int) -> bool:
+
+        self.iq_Queue.abandon_order(nOrderNo)
     
+        return True
+
+    # 직원이 주문 완료시
     def complete_order(self, nOrderNo: int) -> bool:
 
-        pass #cancel_order같은 놈을 만들어야함
+        self.iq_Queue.abandon_order(nOrderNo)
+        
+        return True
 
 
 
@@ -96,23 +102,12 @@ if __name__ == "__main__":
     order005 = Items4Order("Item005", 5)
     order006 = Items4Order("Item006", 6)
 
-    # so1 = SingleOrder(101, (order001, ))
-    # so2 = SingleOrder(102, (order002, order003, order004))
-    # so3 = SingleOrder(103, (order005, order006))
-
-    # print(f"{so1.order=}")
-    # print(f"{so2.order=}")
-    # print(f"{so3.order=}")
-    # print(f"{so1.order_to_string=}")
-    # print(f"{so2.order_to_string=}")
-    # print(f"{so3.order_to_string=}")
-    # print(f"{so1.simplify=}")
-    # print(f"{so2.simplify=}")
-    # print(f"{so3.simplify=}")
 
     om = OrderManager()
     om.push_order((order001, order002, order003, order004)) # 1번 주문서
     om.push_order((order005, order006)) # 2번 주문서
 
     lq = LinkedQueue()
-    print(lq.to_string())
+    print(lq.to_json()) #json
+
+    print(lq.estimate()) #조리시간 조회
