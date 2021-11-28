@@ -2,7 +2,16 @@
 
 # 2021.10.28 created by 안태영: Linked List 추가, 기본 구조 완성
 
-from .LoggerSE2 import Logger
+from datetime import datetime
+
+from backend.lib.LoggerSE2 import Logger
+
+# 공유 함수
+
+#YYYMMDD 형식으로 날짜 구한다 "20211126"
+def get_today_YMD():
+    return datetime.now().strftime("%Y%m%d")
+
 
 class Node(object):
   def __init__(self, dData: dict) -> None:

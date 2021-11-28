@@ -19,39 +19,41 @@ class Items(object):
     __mset_MstCode: set[str] = set() # 초기화 기록용
     __mset_MstCategory: set[str] = set() # 상품코드 추적
 
-    def __new__(cls, sItemCode: str, *args):
-        if sItemCode in Items.__mdct_MstInstance:
+    def __new__(cls, tpleItemInfo: tuple, sItemCode: str=None):
+        #튜플로 생성, str으로 조회
+        if sItemCode and sItemCode in Items.__mdct_MstInstance:
             cls._instance = Items.__mdct_MstInstance[sItemCode]
 
         else:
             cls._instance = super().__new__(cls)
             # 인스턴스의 중복 생성을 막는다
-            Items.__mdct_MstInstance[sItemCode] = cls._instance
+            Items.__mdct_MstInstance[tpleItemInfo[0]] = cls._instance
             cls.logger = Logger()
+
+            if sItemCode:
+                cls.logger.CRITICAL("Wrong Class Call", sItemCode)
 
         cls.logger.INFO(cls._instance)
         return cls._instance
 
-    def __init__(self, sItemCode: str, \
-                        sItemName: str, 
-                        sCategory: str, 
-                        nItemPrice: int, 
-                        nTimeCook: int,
-                        bSoldOut: bool = False) -> None:
+    def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int], *args) -> None:
         cls = type(self)
-        if sItemCode not in cls.__mset_MstCode:
+        if tpleItemInfo[0] not in cls.__mset_MstCode:
 
-            self._s_Code = sItemCode
-            self._s_Name = sItemName
-            self._s_Category = sCategory
-            self._n_Price = nItemPrice
-            self._n_Time = nTimeCook
-            self._b_SoldOut = bSoldOut
+            self._s_Code = tpleItemInfo[0]
+            self._s_Name = tpleItemInfo[1]
+            self._s_Category = tpleItemInfo[2]
+            self._n_Price = tpleItemInfo[3]
+            self._n_Time = tpleItemInfo[4]
+            self._b_Avail = ( tpleItemInfo[5] == 0 )
 
-            self.logger.INFO(f"Item {sItemCode} init")
+            self.logger.INFO(f"Item {self._s_Code} init")
 
-            cls.__mset_MstCode.add(sItemCode)
-            cls.__mset_MstCategory.add(sCategory) # 카테고리 추적
+            cls.__mset_MstCode.add(self._s_Code)
+            cls.__mset_MstCategory.add(self._s_Category) # 카테고리 추적
+
+    def __del__(self):
+        print(f"{self.code} collected")
 
     @classmethod
     def get_all(cls) -> dict:
@@ -82,6 +84,10 @@ class Items(object):
     @property
     def time(self) -> int:
         return self._n_Time
+
+    @property
+    def avail(self) -> bool:
+        return self._b_Avail
 
 # 수량정보는 Items4Order인스턴스 참조.
 # 나머지 정보는 내부 변수인 Item 인스턴스를 참조하여 확인. 
