@@ -40,3 +40,11 @@ LV_CRITICAL = 50
 EXPECTED_TIME_MUL = 1.2
 
 #---------SingleOrder--------
+
+
+#------------DB-------------
+
+DB_FOLDER_PATH = './db/'
+DB_FILE_PATH = DB_FOLDER_PATH+'kiosk.db'
+
+#------------DB-------------
