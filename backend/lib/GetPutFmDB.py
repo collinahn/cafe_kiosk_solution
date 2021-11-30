@@ -66,7 +66,8 @@ class GetPutFmDB(object):
                                     category TEXT NOT NULL, \
                                     itemPrice INT NOT NULL, \
                                     timeEst INT NOT NULL, \
-                                    availability INT NOT NULL \
+                                    availability INT NOT NULL, \
+                                    imgSrc TEXT NOT NULL DEFAULT '/' \
                                     );") #상품 테이블 생성
 
             try:
@@ -137,7 +138,7 @@ class GetPutFmDB(object):
             if conn: 
                 conn.close()
 
-        return lst_Ret # [('상품코드', '상품이름', '카테고리', 가격, 조리시간, 품절 여부), ...]
+        return lst_Ret # [('상품코드', '상품이름', '카테고리', 가격, 조리시간, 품절 여부, '위치'), ...]
 
     # 주문을 받았을 시 기록한다.
     def add_tHistOrder(self, nOrderNo: int, dctDetail: dict, nTimeEstimate: int, sStatus: str='on'):
