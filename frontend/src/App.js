@@ -1,13 +1,13 @@
 import React from "react";
 import { Route } from "react-router-dom";
-import test1 from "./components/test1";
-import test2 from "./components/test2";
+import Manager from "../src/pages/Manager";
+import Main from "../src/pages/Main";
 
 const App = () => {
   return (
     <div>
-      <Route exact path="/" component={test1} />
-      <Route path="/test" component={test2} />
+      <Route path="/main" component={Main} />
+      <Route path="/manager" component={Manager} />
     </div>
   );
 };
