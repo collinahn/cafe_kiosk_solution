@@ -21,7 +21,6 @@ LOG_FILE_PATH = LOG_FOLDER_PATH+'SE2.log'
 MAX_BYTES = 10*1024*1024
 BACKUP_CNT = 10
 
-
 STACK_LV = 2
 STACK_LV_OBJ = STACK_LV + 1
 
@@ -42,9 +41,37 @@ EXPECTED_TIME_MUL = 1.2
 #---------SingleOrder--------
 
 
+
+
 #------------DB-------------
 
 DB_FOLDER_PATH = './db/'
 DB_FILE_PATH = DB_FOLDER_PATH+'kiosk.db'
 
 #------------DB-------------
+
+
+
+
+#---------api common--------
+
+SUCCESS_FALSE_RESPONSE={'success':False}
+
+#---------api common--------
+
+
+
+#----------auth api---------
+
+SQL_INJECTION_FILTER = """ '"`~!@#$%^&*()-+=<>,./?;:}{[]\|"""
+
+#---------auth api---------
+
+
+
+#---------staff api---------
+
+ORDER_COMPLETE = 2000
+ORDER_CANCEL   = 4000
+
+#---------staff api---------
