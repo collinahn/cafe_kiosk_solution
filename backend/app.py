@@ -9,10 +9,10 @@
 # linux machine에서 gunicorn으로 배포
 # gunicorn app:app -b 0.0.0.0:8000 -w 2 --timeout 10 --preload
 
+# 파이썬 라이브러리
+# flask, flask_restx, flask_jwt_extended
+
 from flask import Flask
-from flask import request
-from flask import make_response
-from flask import jsonify
 from flask_restx import Resource
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
@@ -33,7 +33,8 @@ api = Api(
     description='',
     terms_url='/',
     contact='collinahn@hufs.ac.kr',
-    license='MIT'
+    license='MIT',
+    validate=True # 파라미터 검증
 ) #api정보입력
 
 # ./api/ 폴더 내부 파일들에 작성된 네임스페이스들을 가져온다.
