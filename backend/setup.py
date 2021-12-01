@@ -20,25 +20,38 @@ def initialize_item() -> dict:
 # app.py에서 서브 스레드로 실행된다.
 def debug_console() -> None:
     logger = Logger()
-    lq = LinkedQueue()
-    ordm = OrderManager()
+    cls_Lq = LinkedQueue()
+    cls_Om = OrderManager()
 
     while True:
         sInput = input()
         if sInput == '':
             pass
 
-        elif sInput == 'i' or sInput == 'push':
+        elif sInput in ['i', 'push']:
             dct_Items = initialize_item() # 상품들 가져온다
             logger.DEBUG("possible options: ", dct_Items.keys())
-            sItemID = input("choose your option: ")
-            if sItemID in dct_Items.keys():
-                nNum = int(input("how many?"))
-                ordm.push_order((Items4Order(sItemID, nNum), ))
+            lst_ItemID = list(map(str, input("specify your options: ").split()))
+            if any(id in lst_ItemID for id in dct_Items):
+                tpl_Order = tuple( Items4Order(item, 5) for item in lst_ItemID )
+                cls_Om.push_order(tpl_Order)
+                # logger.DEBUG(tpl_Order[0].item.name) #아이템 이름
+                # logger.DEBUG(tpl_Order[0].quantity)  #아이템 수량
             else:
                 logger.DEBUG("wrong order")
 
+        elif sInput in ['q', 'queue', 'Q']:
+            logger.DEBUG(f"{cls_Lq.to_json() = }")
+            logger.DEBUG(f"{cls_Lq.to_string() = }")
 
-        elif sInput == 'q' or sInput == 'queue' or sInput == 'Q':
-            logger.DEBUG(f"{lq.to_json() = }")
-            logger.DEBUG(f"{lq.to_string() = }")
+        elif sInput in ['e', 'complete', 'kill']:
+            logger.DEBUG(f"{cls_Lq.to_json() = }")
+            sCode = input("input order code to complete = ")
+            cls_Om.complete_order(int(sCode))
+            logger.DEBUG(f"{cls_Lq.to_json() = }")
+
+        elif sInput in ['c', 'cancel']:
+            logger.DEBUG(f"{cls_Lq.to_json() = }")
+            sCode = input("input order code to cancel = ")
+            cls_Om.cancel_order_staff(int(sCode))
+            logger.DEBUG(f"{cls_Lq.to_json() = }")
