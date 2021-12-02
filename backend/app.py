@@ -22,6 +22,8 @@ from backend.api.admin import Admin
 from backend.api.auth import Auth
 from backend.api.order import Order
 from backend.api.staff import Staff
+from backend.api.start import Start
+from backend.lib.ItemFactory import ItemFactory
 from backend.setup import initialize_item
 from backend.setup import debug_console
 
@@ -38,13 +40,15 @@ api = Api(
 ) #api정보입력
 
 # ./api/ 폴더 내부 파일들에 작성된 네임스페이스들을 가져온다.
+api.add_namespace(Start, '/start')
 api.add_namespace(Admin, '/admin')
 api.add_namespace(Auth, '/auth')
 api.add_namespace(Order, '/order')
 api.add_namespace(Staff, '/staff')
 
 # 내부 로직이 가동되기 전에 초기화한다
-initialize_item()
+cls_It = ItemFactory()
+cls_It.lazy_init()
 
 # 콘솔에서 디버깅할 수 있도록 하는 도구
 Thread(target=debug_console, daemon=False).start()
