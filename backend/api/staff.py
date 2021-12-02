@@ -1,3 +1,7 @@
+# 직원 큐 조회/완료&취소요청
+
+# 2021.12.02 created by 안태영
+
 from flask import request
 from flask.json import jsonify
 from flask_restx import Api
@@ -14,9 +18,9 @@ from backend.lib.OrderManager import OrderManager
 Staff = Namespace('Staff')
 cls_Om = OrderManager()
 
-post_body_fields = Staff.model('Resource', {
-    'orderCode':fields.String('order code, 4 digits'),
-    'status':fields.Integer('2000(complete)/4000(cancel)')
+post_staff_body = Staff.model('Resource-Staff', {
+    'orderCode':fields.String('0001'),
+    'status':fields.Integer(2000)
 })
 
 @Staff.route('/')
@@ -32,8 +36,8 @@ class CStaff(Resource):
         })
 
     @jwt_required()
-    @Staff.doc(body=post_body_fields)
-    @Staff.expect(post_body_fields)
+    @Staff.doc(body=post_staff_body)
+    @Staff.expect(post_staff_body)
     def post(self):
         dct_Input: dict = request.get_json()
 

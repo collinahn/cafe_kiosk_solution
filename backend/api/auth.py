@@ -18,17 +18,17 @@ from backend.lib.GetPutFmDB import GetPutFmDB
 Auth = Namespace('Auth')
 cls_DB = GetPutFmDB()
 
-post_body_fields = Auth.model('Resource', {
-    'id':fields.String('id'), 
-    'pw':fields.String('hashed pw'), 
-    'actor':fields.String('staff/admin')
+post_auth_body = Auth.model('Resource-Auth', {
+    'id':fields.String('staff'), 
+    'pw':fields.String('a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'), 
+    'actor':fields.String('staff')
 })
 
 @Auth.route('/')
 class CAuth(Resource):
 
-    @Auth.doc(body=post_body_fields)
-    @Auth.expect(post_body_fields) # 파라미터 검증까지
+    @Auth.doc(body=post_auth_body)
+    @Auth.expect(post_auth_body) # 파라미터 검증까지
     def post(self):
         dct_Input: dict = request.get_json()
 
