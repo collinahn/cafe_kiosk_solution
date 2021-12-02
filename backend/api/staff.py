@@ -22,13 +22,16 @@ post_body_fields = Staff.model('Resource', {
 @Staff.route('/')
 class CStaff(Resource):
 
-    # @jwt_required()
+    @jwt_required()
+    @Staff.response(200, 'Success')
+    @Staff.response(204, 'Empty Queue')
     def get(self):
-
         return jsonify({
+            'success':True,
+            'queue':cls_Om.queue.to_json()
         })
 
-    # @jwt_required()
+    @jwt_required()
     @Staff.doc(body=post_body_fields)
     @Staff.expect(post_body_fields)
     def post(self):

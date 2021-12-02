@@ -36,6 +36,9 @@ class OrderManager(object):
 
             self.logger.INFO("OrderManager init")
 
+    @property
+    def queue(self) -> LinkedQueue:
+        return self.iq_Queue
 
     # 주문서 생성한다
     # { 주문서번호:SingleOrder인스턴스 }를 반환함.
