@@ -21,8 +21,11 @@ class ItemFactory(object):
             cls._init = True
 
             self.dct_Items: dict[Items] = {}
+            self.lst_Data4Json: list[dict] = []
 
             self.logger.INFO("ItemFactory init")
+
+    
 
     #db초기화 후 실행하기 위해 lazy init을 해줌
     def lazy_init(self) -> dict[Items]:
@@ -33,6 +36,26 @@ class ItemFactory(object):
             self.dct_Items[itemInfo[0]] = Items(itemInfo)
 
         return self.dct_Items # { "itemcode123":Items인스턴스 }
+
+    # /start/v1에서 반환할 목록 초기화
+    # lazy_init() 다음에 실행되어야 함.
+    def lazy_init_item_list(self) -> bool:
+        try:
+            self.lst_Data4Json = [ {
+                'itemClass':a.category,
+                'itemCode':a.code,
+                'itemName':a.name,
+                'thumbnail':a.url,
+                'itemPrice':a.price,
+                'avail':a.avail
+                } for a in self.asset.values()
+            ]
+        except AttributeError as ae:
+            self.logger.ERROR(ae)
+            return False
+        
+        return True
+        
 
     # 개별 Items인스턴스 리턴
     def get_instance(self, sItemCode: str) -> Items:
@@ -45,3 +68,7 @@ class ItemFactory(object):
     @property #전체 items인스턴스들 리턴(수정 불가)
     def asset(self) -> dict[Items]: 
         return self.dct_Items
+
+    @property
+    def item_list(self) -> list[dict]:
+        return self.lst_Data4Json

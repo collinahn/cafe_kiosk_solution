@@ -20,14 +20,7 @@ class CStart(Resource):
     def get(self):
         return jsonify({
             'classification':cls_It.get_instance('default').get_categories(),
-            'data': [ {
-                'itemClass':a.category,
-                'itemCode':a.code,
-                'itemName':a.name,
-                'thumbnail':a.url,
-                'itemPrice':a.price,
-                'avail':a.avail
-                } for a in cls_It.asset.values() ]
+            'data': cls_It.item_list
         })
 
 
