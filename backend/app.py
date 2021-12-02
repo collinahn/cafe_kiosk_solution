@@ -46,6 +46,7 @@ api.add_namespace(Staff, '/staff')
 # 내부 로직이 가동되기 전에 초기화한다
 initialize_item()
 
+# 콘솔에서 디버깅할 수 있도록 하는 도구
 Thread(target=debug_console, daemon=False).start()
 
 # 릴리즈 될 땐 안보이는 곳에
