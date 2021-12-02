@@ -6,16 +6,50 @@
 from flask import request
 from flask.json import jsonify
 from flask_restx import Api
+from flask_restx import fields
 from flask_restx import Namespace
 from flask_restx import Resource
-from ..lib.UtilsSE2 import LinkedQueue
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended.view_decorators import jwt_required
+
+import backend.lib.constantsSE2 as const
+from backend.lib.GetPutFmDB import GetPutFmDB
 
 Auth = Namespace('Auth')
+cls_DB = GetPutFmDB()
 
-@Auth.route('')
-class AuthTest(Resource):
+post_auth_body = Auth.model('Resource-Auth', {
+    'id':fields.String('staff'), 
+    'pw':fields.String('a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3'), 
+    'actor':fields.String('staff')
+})
+
+@Auth.route('/')
+class CAuth(Resource):
+
+    @Auth.doc(body=post_auth_body)
+    @Auth.expect(post_auth_body) # 파라미터 검증까지
+    def post(self):
+        dct_Input: dict = request.get_json()
+
+        if any(c in dct_Input['id'] for c in const.SQL_INJECTION_FILTER): #추가 유효성 검사
+            return jsonify(const.SUCCESS_FALSE_RESPONSE)
+
+        # 인증 성공!
+        if cls_DB.verify_user(dct_Input['actor'], dct_Input['id'], dct_Input['pw']):
+            return jsonify({
+                'success':True,
+                'jwt_token':create_access_token(identity=dct_Input['id'], expires_delta=False)
+            })
+
+        return jsonify(const.SUCCESS_FALSE_RESPONSE)
+
+
+# thunder-client로 확인 완료
+@Auth.route('/test')
+class CAuthTest(Resource):
+    @jwt_required()
     def get(self):
-
         return jsonify({
-            'auth-ret':True
+            'success':True
         })

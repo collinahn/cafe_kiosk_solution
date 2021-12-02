@@ -19,15 +19,18 @@ class Items(object):
     __mset_MstCode: set[str] = set() # 초기화 기록용
     __mset_MstCategory: set[str] = set() # 상품코드 추적
 
-    def __new__(cls, tpleItemInfo: tuple, sItemCode: str=None):
+    def __new__(cls, tplItemInfo: tuple, sItemCode: str=None, bTraceCategory: bool=True, *args):
         #튜플로 생성, str으로 조회
-        if sItemCode and sItemCode in Items.__mdct_MstInstance:
-            cls._instance = Items.__mdct_MstInstance[sItemCode]
+        if sItemCode and sItemCode in cls.__mdct_MstInstance: # 아이템 코드로 호출
+            cls._instance = cls.__mdct_MstInstance[sItemCode]
+
+        elif tplItemInfo and tplItemInfo[0] in cls.__mdct_MstInstance: # 튜플로 호출
+            cls._instance = cls.__mdct_MstInstance[tplItemInfo[0]]
 
         else:
             cls._instance = super().__new__(cls)
             # 인스턴스의 중복 생성을 막는다
-            Items.__mdct_MstInstance[tpleItemInfo[0]] = cls._instance
+            cls.__mdct_MstInstance[tplItemInfo[0]] = cls._instance
             cls.logger = Logger()
 
             if sItemCode:
@@ -36,7 +39,7 @@ class Items(object):
         cls.logger.INFO(cls._instance)
         return cls._instance
 
-    def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int], *args) -> None:
+    def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int,str], *args, bTraceCategory: bool=True) -> None:
         cls = type(self)
         if tpleItemInfo[0] not in cls.__mset_MstCode:
 
@@ -45,12 +48,14 @@ class Items(object):
             self._s_Category = tpleItemInfo[2]
             self._n_Price = tpleItemInfo[3]
             self._n_Time = tpleItemInfo[4]
-            self._b_Avail = ( tpleItemInfo[5] == 0 )
+            self._b_Avail = ( tpleItemInfo[5] != 0 )
+            self._s_Url = tpleItemInfo[6]
 
             self.logger.INFO(f"Item {self._s_Code} init")
 
             cls.__mset_MstCode.add(self._s_Code)
-            cls.__mset_MstCategory.add(self._s_Category) # 카테고리 추적
+            if bTraceCategory: # 더미 데이터 거르기 위함
+                cls.__mset_MstCategory.add(self._s_Category) # 카테고리 추적
 
     def __del__(self):
         print(f"{self.code} collected")
@@ -63,7 +68,7 @@ class Items(object):
     @classmethod
     def get_categories(cls) -> set:
         # 보유중인 카테고리를 확인
-        return cls.__mset_MstCategory
+        return list(cls.__mset_MstCategory)
 
     @property
     def code(self) -> str:
@@ -88,6 +93,10 @@ class Items(object):
     @property
     def avail(self) -> bool:
         return self._b_Avail
+
+    @property
+    def url(self) -> str:
+        return self._s_Url
 
 # 수량정보는 Items4Order인스턴스 참조.
 # 나머지 정보는 내부 변수인 Item 인스턴스를 참조하여 확인. 
@@ -120,7 +129,7 @@ class Items4Order(object):
             return self._n_Quantity
         except AttributeError as e:
             self.logger.CRITICAL("Items4Order init fail")
-            return None
+            return 0
 
 
 
@@ -158,21 +167,21 @@ class Items2Modify(object):
 
 if __name__ == "__main__":
     
-    item001 = Items("Item001", "Strawberry", "Fruit", 1000, 10)
-    item002 = Items("Item002", "Peanuts", "Nuts", 2000, 10)
-    item003 = Items("Item003", "Bannana", "Fruit", 1000, 10)
-    item004 = Items("Item004", "Milk", "Drink", 1000, 10)
-    item005 = Items("Item005", "Cow", "Animal", 1000, 10)
-    item006 = Items("Item006", "Human", "Animal", 1000, 10)
+    item001 = Items(("Item001", "Strawberry", "Fruit", 1000, 10, 1, "/"))
+    item002 = Items(("Item002", "Peanuts", "Nuts", 2000, 10, 1, "/"))
+    item003 = Items(("Item003", "Bannana", "Fruit", 1000, 10, 1, "/"))
+    item004 = Items(("Item004", "Milk", "Drink", 1000, 10, 1, "/"))
+    item005 = Items(("Item005", "Cow", "Animal", 1000, 10, 1, "/"))
+    item006 = Items(("Item006", "Human", "Animal", 1000, 10, 1, "/"))
 
     order001 = Items4Order("Item001", 4)
-    print(order001.item.code, order001.item.name, order001.item.category, order001.quantity)
+    print(order001.item.code, order001.item.name, order001.item.category, order001.quantity, order001.item.url)
 
     order002 = Items4Order("Item004", 5)
-    print(order002.item.code, order002.item.name, order002.item.category, order002.quantity)
+    print(order002.item.code, order002.item.name, order002.item.category, order002.quantity, order002.item.url)
 
     order003 = Items4Order("Item006", 6)
-    print(order003.item.code, order003.item.name, order003.item.category, order003.quantity)
+    print(order003.item.code, order003.item.name, order003.item.category, order003.quantity, order003.item.url)
 
     try:
         order004 = Items4Order("Item009", 7) # 실패하는 테스트케이스
