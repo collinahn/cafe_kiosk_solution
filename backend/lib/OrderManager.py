@@ -36,6 +36,9 @@ class OrderManager(object):
 
             self.logger.INFO("OrderManager init")
 
+    @property
+    def queue(self) -> LinkedQueue:
+        return self.iq_Queue
 
     # 주문서 생성한다
     # { 주문서번호:SingleOrder인스턴스 }를 반환함.
@@ -64,23 +67,23 @@ class OrderManager(object):
     # False: 주문이 완료가 임박하여 삭제 불가 
     def cancel_order_guest(self, nOrderNo: int) -> bool:
 
-        self.iq_Queue.cancel_order(nOrderNo)
+        b_Ret: bool = self.iq_Queue.cancel_order(nOrderNo)
 
-        return True
+        return b_Ret
 
     # 직원이 주문 취소시    
     def cancel_order_staff(self, nOrderNo: int) -> bool:
 
-        self.iq_Queue.abandon_order(nOrderNo)
+        b_Ret: bool = self.iq_Queue.abandon_order(nOrderNo)
     
-        return True
+        return b_Ret
 
     # 직원이 주문 완료시
     def complete_order(self, nOrderNo: int) -> bool:
 
-        self.iq_Queue.abandon_order(nOrderNo)
+        b_Ret: bool = self.iq_Queue.abandon_order(nOrderNo)
         
-        return True
+        return b_Ret
 
 
 
@@ -88,12 +91,12 @@ if __name__ == "__main__":
     from .Items import Items, Items4Order
 
 
-    item001 = Items("Item001", "Strawberry", "Fruit", 1000, 100)
-    item002 = Items("Item002", "Peanuts", "Nuts", 2000, 1000)
-    item003 = Items("Item003", "Bannana", "Fruit", 1000, 100)
-    item004 = Items("Item004", "Milk", "Drink", 1000, 1000)
-    item005 = Items("Item005", "Cow", "Animal", 1000, 10000)
-    item006 = Items("Item006", "Human", "Animal", 1000, 100)
+    item001 = Items(("Item001", "Strawberry", "Fruit", 1000, 100, 1, '/default'))
+    item002 = Items(("Item002", "Peanuts", "Nuts", 2000, 1000, 1, '/default'))
+    item003 = Items(("Item003", "Bannana", "Fruit", 1000, 100, 1, '/default'))
+    item004 = Items(("Item004", "Milk", "Drink", 1000, 1000, 1, '/default'))
+    item005 = Items(("Item005", "Cow", "Animal", 1000, 10000, 1, '/default'))
+    item006 = Items(("Item006", "Human", "Animal", 1000, 100, 1, '/default'))
 
     order001 = Items4Order("Item001", 1)
     order002 = Items4Order("Item002", 2)

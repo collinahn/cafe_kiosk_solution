@@ -1,6 +1,9 @@
 # 백엔드에서 필요한 함수 및 자료구조를 보유하는 파일
 
 # 2021.10.28 created by 안태영: Linked List 추가, 기본 구조 완성
+# 2021.11.20 modified by 이혜원: 핵심 메소드(탐색 후 노드를 분리) 추가
+# 2021.12.02 modified by 안태영: 버그수정(commit 13201542315bf66c8bedd9baacc8ff10982a02c0), 
+#                                api에서 사용하기위한 함수 (to_json, to_str) 추가
 
 from datetime import datetime
 from typing import final
@@ -87,7 +90,8 @@ class LinkedQueue(object):
         return s_Data2Str
 
     # 자료 전체를 문자열로 리턴한다.
-    def to_json(self) -> str:
+    # api에선 사용안함
+    def to_json_str(self) -> str:
         p_Curs: Node = self._headPoint
         s_Data2Str: str = ""
         while p_Curs:
@@ -107,6 +111,28 @@ class LinkedQueue(object):
             p_Curs = p_Curs.nextLink
 
         return s_Data2Str
+
+    # 주문 대기열 전체를 리스트로 리턴한다.
+    # api에서 사용
+    def to_json(self) -> list:
+        p_Curs: Node = self._headPoint
+        lst_Data: list = []
+        
+        while p_Curs:
+            try:
+                dct_NextOrder = next(iter(p_Curs.data.values())).simplify # values는 SingleOrder객체 반환
+            except AttributeError as ae:
+                self.logger.ERROR(ae)
+                continue
+            except IndexError as ie:
+                self.logger.ERROR(ie)
+                continue
+
+            lst_Data.append(dct_NextOrder)
+
+            p_Curs = p_Curs.nextLink
+
+        return lst_Data
   
     # 주문서 큐에서 걸리는 시간을 모두 더해 리턴한다(총 대기시간)
     def estimate(self) -> int:
