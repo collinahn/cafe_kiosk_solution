@@ -72,13 +72,13 @@ const PayButtonWrap = styled.div`
 `;
 
 const TextWrap = styled.p`
-  margin: 15px 0 15px 50px;
+  margin: 15px 0 5px 50px;
   font-weight: bold;
   font-size: 16px;
   margin-left: 50px;
 `;
 const PriceWrap = styled.p`
-  margin: 15px 50px 15px 0;
+  margin: 15px 50px 5px 0;
   font-weight: bold;
   font-size: 16px;
 `;

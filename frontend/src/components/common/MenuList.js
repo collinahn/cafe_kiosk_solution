@@ -149,18 +149,20 @@ export default function MenuList() {
 
   let [targetArray, setTargetArray] = useState(CoffeeList);
 
-  // const [menu, setMenu] = useState([]);
+  const [APImenu, setAPIMenu] = useState([]);
 
   // API에서 값 받아오기
-  // useEffect(() => {
-  //   axios
-  //     .get("/start/v1")
-  //     .then((res) => {
-  //       setMenu(res.data);
-  //       console.log("불러오기 성공");
-  //     })
-  //     .catch((err) => console.error(err));
-  // }, []);
+  useEffect(() => {
+    axios
+      .get("/start/v1")
+      .then((res) => {
+        setAPIMenu(res.data);
+        console.log("불러오기 성공");
+        console.log(APImenu);
+      })
+      .catch((err) => console.error(err))
+      .finally(console.log(APImenu));
+  }, []);
 
   // const [cart, setCart] = useState({
   //   name: "",
