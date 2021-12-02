@@ -20,6 +20,7 @@ export default function Login(props) {
           headers: {
             "Content-Type": "application/json",
           },
+          withCredentials: true,
         })
         .then((res) => {
           console.log("res.data.accessToken : " + res.data);
