@@ -2,6 +2,7 @@ from backend.lib.GetPutFmDB import GetPutFmDB
 from backend.lib.ItemFactory import ItemFactory
 from backend.lib.Items import Items, Items4Order
 from backend.lib.OrderManager import OrderManager
+from backend.lib.SingleOrder import SingleOrder
 from backend.lib.UtilsSE2 import LinkedQueue
 from backend.lib.LoggerSE2 import Logger
 
@@ -17,6 +18,13 @@ def initialize_item() -> dict:
         dct_Ret[itemInfo[0]] = Items(itemInfo)
 
     return dct_Ret # { "itemcode123":Items인스턴스 }
+
+# 서버 가동 전 필요한 사항을 초기화한다.
+def initialize_distributed_kiosk_system() -> bool:
+    cls_Db = GetPutFmDB()
+    cls_It = ItemFactory()
+    cls_It.lazy_init()
+    cls_It.lazy_init_item_list()
 
 # 디버그를 위한 함수.
 # app.py에서 서브 스레드로 실행된다.
