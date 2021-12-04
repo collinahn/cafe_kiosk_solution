@@ -48,8 +48,8 @@ class LinkedQueue(object):
         if not hasattr(cls, "_init"):
             cls._init = True
 
-        self._headPoint = None
-        self._tailPoint = None
+            self._headPoint = None
+            self._tailPoint = None
 
         self.logger.INFO(f"Queue {sName} init")
 
@@ -148,7 +148,7 @@ class LinkedQueue(object):
                 self.logger.ERROR(ie)
                 continue
 
-        p_Curs = p_Curs.nextLink
+            p_Curs = p_Curs.nextLink
 
         return n_Ret
 
@@ -161,14 +161,12 @@ class LinkedQueue(object):
         p_Curs: Node = self._headPoint
         n_Count: int = 0
         while p_Curs:
-            if nOrderNo in p_Curs.data.keys():
+            if nOrderNo in p_Curs.data.keys() or n_Count == 5:
+                b_Available = True
                 break
 
             p_Curs = p_Curs.nextLink
             n_Count += 1
-            if n_Count == 4:
-                b_Available = True
-                break
 
         return b_Available
 
@@ -255,6 +253,20 @@ class LinkedQueue(object):
     # 고객이 호출될 때와는 다르게 취소 조건을 따지지 않는다.
     def abandon_order(self, nOrderNo: int) -> bool:
         return self._detach(nOrderNo)
+
+    # 주문의 완료 여부를 확인한다
+    def check_order(self, nOrderNo: int) -> bool:
+        b_Exists: bool = False
+        p_Curs: Node = self._headPoint
+
+        while p_Curs:
+            if nOrderNo in p_Curs.data.keys():
+                b_Exists = True
+                break
+
+            p_Curs = p_Curs.nextLink
+
+        return b_Exists
  
 
 if __name__ == "__main__":
