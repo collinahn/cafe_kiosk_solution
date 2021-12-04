@@ -44,7 +44,7 @@ class OrderManager(object):
     # { 주문서번호:SingleOrder인스턴스 }를 반환함.
     # SingleOrder인스턴스는 주문 및 상품의 정보를 모두 갖고 있음.
     # 이 형식대로 큐에 푸시됨(팩토리 패턴)
-    def _make_order(self, tplOrder: tuple[Items4Order] = ()) -> dict:
+    def _make_order(self, tplOrder: tuple[Items4Order] = ()) -> dict[int,SingleOrder]:
         # 오늘 날짜인지 확인한다.(일마다 초기화)
         if self.__is_DateLastCount != utils.get_today_YMD():
             self.__in_OrderCount = 0
@@ -56,9 +56,11 @@ class OrderManager(object):
         return { self.__in_OrderCount:SingleOrder(self.__in_OrderCount, tplOrder) }
 
     # 주문서 큐에 푸시하는 함수
-    def push_order(self, tplOrder: tuple[Items4Order] = ()) -> None:
+    def push_order(self, tplOrder: tuple[Items4Order] = ()) -> str:
+        dct_ToPush = self._make_order(tplOrder)
+        self.iq_Queue.push(dct_ToPush)
 
-        self.iq_Queue.push(self._make_order(tplOrder))
+        return str(next(iter(dct_ToPush))).zfill(4) #주문 순번 str로 리턴
 
 
     # 클라이언트 측에서 주문 취소할 시 찾아서 취소함
@@ -82,6 +84,13 @@ class OrderManager(object):
     def complete_order(self, nOrderNo: int) -> bool:
 
         b_Ret: bool = self.iq_Queue.abandon_order(nOrderNo)
+        
+        return b_Ret
+
+    # 완료되었는지 확인
+    def check_complete(self, nOrderNo: int) -> bool:
+        
+        b_Ret: bool = self.iq_Queue.check_order(nOrderNo)
         
         return b_Ret
 
