@@ -18,32 +18,37 @@ Order = Namespace('Order')
 cls_Om = OrderManager()
 db = GetPutFmDB()
 
-post_order_body = Order.model('order',{
-    'itemCode':fields.String('itemCode'),
-    'quantity':fields.Integer(100)
-})
+class itemOrder(fields.Raw):
+    def format(self):
+        order = {'itemCode':fields.String('itemCode'),
+                 'quantity':fields.Integer(100)}
+        return order
+
+post_order_body = Order.model('Resource-Order', {'order':itemOrder(attribute = 'itemOrder')})
 
 cancel_order_body = Order.model('Resource-Cancel',{'isCancel':fields.Boolean(True)})
 
 @Order.route('/')
 class COrder(Resource):
+    
+    @Order.doc(body=post_order_body)
+    @Order.expect(post_order_body)
     def post(self):
         dct_Input: dict = request.get_json()
-        cls_Om.push_order(dct_Input['order'])
+        cls_Q = utils.LinkedQueue()
         return jsonify({'success':True,
-                        'orderCode':'001',
-                        'timeComplete':utils.estimate()
+                        'orderCode':cls_Om.push_order(dct_Input['order']),
+                        'timeComplete':cls_Q.estimate()
                         })
-    
+
+
 @Order.route('/<orderCode>')
 class COrderCode(Resource):
-    
-    @Order.response(100, 'Success')
-    @Order.response(150, 'isComplete')
+
     def get(self,orderCode):
         return jsonify({
             'success':True,
-            'isComplete':cls_Om.complete_order(int(orderCode))
+            'isComplete':cls_Om.check_complete(int(orderCode))
         })
     
     @Order.doc(cnl_body=cancel_order_body)
@@ -52,10 +57,10 @@ class COrderCode(Resource):
         dct_Input: dict = request.get_json()
 
         b_CnlRequest = dct_Input['isCancel']
-        
+        cls_Q = utils.LinkedQueue()
         if b_CnlRequest:
             return jsonify({
-                'isCancellable':utils._check_cancellable(int(orderCode)),
+                'isCancellable':cls_Q._check_cancellable(int(orderCode)),
                 'isCancelled':cls_Om.cancel_order_guest(int(orderCode))
                 })
 
