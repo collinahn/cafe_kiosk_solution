@@ -61,12 +61,12 @@ class SingleOrder(object):
 if __name__ == "__main__":
     from .Items import Items, Items4Order
 
-    item001 = Items("Item001", "Strawberry", "Fruit", 1000, 100)
-    item002 = Items("Item002", "Peanuts", "Nuts", 2000, 1000)
-    item003 = Items("Item003", "Bannana", "Fruit", 1000, 100)
-    item004 = Items("Item004", "Milk", "Drink", 1000, 1000)
-    item005 = Items("Item005", "Cow", "Animal", 1000, 10000)
-    item006 = Items("Item006", "Human", "Animal", 1000, 100)
+    item001 = Items(("Item001", "Strawberry", "Fruit", 1000, 10, 1, "/"))
+    item002 = Items(("Item002", "Peanuts", "Nuts", 2000, 10, 1, "/"))
+    item003 = Items(("Item003", "Bannana", "Fruit", 1000, 10, 1, "/"))
+    item004 = Items(("Item004", "Milk", "Drink", 1000, 10, 1, "/"))
+    item005 = Items(("Item005", "Cow", "Animal", 1000, 10, 1, "/"))
+    item006 = Items(("Item006", "Human", "Animal", 1000, 10, 1, "/"))
 
     order001 = Items4Order("Item001", 1)
     order002 = Items4Order("Item002", 2)

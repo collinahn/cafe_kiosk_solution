@@ -42,13 +42,13 @@ class ItemFactory(object):
     def lazy_init_item_list(self) -> bool:
         try:
             self.lst_Data4Json = [ {
-                'itemClass':a.category,
-                'itemCode':a.code,
-                'itemName':a.name,
-                'thumbnail':a.url,
-                'itemPrice':a.price,
-                'avail':a.avail
-                } for a in self.asset.values()
+                'itemClass':spec.category,
+                'itemCode':spec.code,
+                'itemName':spec.name,
+                'thumbnail':spec.url,
+                'itemPrice':spec.price,
+                'avail':spec.avail
+                } for spec in self.asset.values()
             ]
         except AttributeError as ae:
             self.logger.ERROR(ae)

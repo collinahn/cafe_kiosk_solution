@@ -23,6 +23,18 @@ def to_int(sData: str, sDebugData: str=None):
         Logger.CRITICAL("Cannot Convert Data to Int", sData, sDebugData, ve)
         return 0
 
+#이상 형식 감지 -> True
+def check_false_param(dctData: dict, dkArgs: dict, sExcept: str='') -> bool:
+        # 잘못된 값이 오면 abort
+        try:
+            for arg in dkArgs:
+                if arg!=sExcept and not dctData[arg]:
+                    return True
+        except KeyError as e:
+            Logger.ERROR('key error no key named', e, 'instead received', dctData.keys())
+            return True
+        return False
+
 class Node(object):
     def __init__(self, dData: dict) -> None:
         self.data = dData
