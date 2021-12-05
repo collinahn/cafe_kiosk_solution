@@ -1,3 +1,5 @@
+import ast
+
 from backend.lib.GetPutFmDB import GetPutFmDB
 from backend.lib.ItemFactory import ItemFactory
 from backend.lib.Items import Items, Items4Order
@@ -12,19 +14,31 @@ from backend.lib.LoggerSE2 import Logger
 def initialize_item() -> dict:
     cls_DB: GetPutFmDB = GetPutFmDB()
     lst_Items: list = cls_DB.get_items() #DB의 Items테이블에서 정보를 받아온다
-    dct_Ret: dict[Items] = {}
-
-    for itemInfo in lst_Items:
-        dct_Ret[itemInfo[0]] = Items(itemInfo)
-
-    return dct_Ret # { "itemcode123":Items인스턴스 }
+    return {
+        itemInfo[0]:Items(itemInfo) 
+        for itemInfo in lst_Items
+    }
 
 # 서버 가동 전 필요한 사항을 초기화한다.
 def initialize_distributed_kiosk_system() -> bool:
     cls_Db = GetPutFmDB()
     cls_It = ItemFactory()
+    cls_Om = OrderManager()
     cls_It.lazy_init()
     cls_It.lazy_init_item_list()
+
+    lst_Ret = cls_Db.check_db_unhandled_order()
+    if lst_Ret:
+        for record in lst_Ret:
+            n_OrderNo: int = record[0]
+            dct_Detail: dict = ast.literal_eval(record[2]) # str -> dict
+            tpl_OrderList: tuple = tuple(
+                Items4Order(key, item) for key, item in dct_Detail.items()
+            )
+
+            cls_Om.push_order(tpl_OrderList, nForceOrderNo=n_OrderNo)
+
+    return True
 
 # 디버그를 위한 함수.
 # app.py에서 서브 스레드로 실행된다.

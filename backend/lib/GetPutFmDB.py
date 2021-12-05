@@ -6,6 +6,11 @@
 # 2021.11.27 modified by 안태영: 
 #                        1) 객체 생성 시 실제 파일이 있는 지 체크, 생성자에서 테이블 생성하도록 수정
 #                        2) 공통적으로 사용하는 staticmethod 추가(시간 관련)
+# 2021.12.06 modified by 안태영:
+#                        1) db트랜젝션을 제어하기 위한 대부분의 함수 완성
+#                        2) TODO: 각 서브시스템별로 파일 분리하기
+#
+# TODO: order.py에 add_customer_info() 함수 반영한다
 
 import os
 import sqlite3
@@ -258,7 +263,7 @@ class GetPutFmDB(object):
                 conn.close()
 
     # 주문 시 주문자 정보를 기록한다
-    def add_orderer_info(self, nOrderNo: int, sMacAddress: str, sIPAdress: str):
+    def add_customer_info(self, nOrderNo: int, sMacAddress: str, sIPAdress: str):
         conn: Connection = None
         s_TblName = self.get_table_name_tody(sType='Customer')
 
@@ -277,8 +282,54 @@ class GetPutFmDB(object):
             if conn: 
                 conn.close()
 
+    # 프로그램 재 시작시 필요한 사항(orderCnt) 체크
+    def check_db_order_count(self) -> int:
+        conn: Connection = None
+        lst_Ret: list = []
+        s_TblName: str = self.get_table_name_tody()
+
+        self.create_tHistOrder()
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            curs = conn.cursor()
+            query = f"SELECT * FROM {s_TblName} ORDER BY ROWID DESC LIMIT 1;"
+            curs.execute(query)
+            lst_Ret = curs.fetchall()
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+        return lst_Ret[0][0] if lst_Ret else 0
 
 
+    # 프로그램 재 시작시 필요한 사항(완료되지 않은 주문) 체크
+    def check_db_unhandled_order(self) -> list or None:
+        conn: Connection = None
+        lst_Ret: list = []
+        s_TblName: str = self.get_table_name_tody()
+
+        self.create_tHistOrder()
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            curs = conn.cursor()
+            query = f"SELECT * FROM {s_TblName} \
+                        WHERE `status`=? \
+                        ORDER BY ROWID;"
+            curs.execute(query, ('on', ))
+            lst_Ret = curs.fetchall()
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+        return lst_Ret or None
 
 
 if __name__ == '__main__':
@@ -294,4 +345,7 @@ if __name__ == '__main__':
     db.add_result_tHistOrder(1,"completed")
 
     db.create_tCustomer()
-    db.add_orderer_info(100,'mad12jqlkdqjlk','0.0.0.0')
+    db.add_customer_info(100,'mad12jqlkdqjlk','0.0.0.0')
+
+    print(db.check_db_order_count())
+    print(db.check_db_unhandled_order())

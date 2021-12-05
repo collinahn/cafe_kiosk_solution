@@ -2,8 +2,14 @@
 # 주문서는 복수의 "상품과 상품의 수량"으로 구성된다.
 # 주문서의 시간을 계산한다(가장 긴 상품의 준비시간 * 1.2).
 #
+# 주의: 본 클래스의 인스턴스는 주문을 푸시하는 과정에서 자동으로 생성되므로,
+#       OrderManager 클래스 외의 코드를 작성하는 과정에서 추가로 인스턴스를 생성하지 않는다
+#
 # 2021.11.26 created by 안태영
+#
 
+
+from os import path
 from backend.lib.Items import Items4Order
 from backend.lib.LoggerSE2 import Logger
 import backend.lib.constantsSE2 as const
@@ -31,6 +37,7 @@ class SingleOrder(object):
     @property
     def _time(self) -> int:
         n_largest: int = 0
+        print(self.tpl_OrderList)
         if self.tpl_OrderList:
             for target in self.tpl_OrderList:
                 if target.item.time > n_largest:
@@ -42,19 +49,19 @@ class SingleOrder(object):
     def time(self) -> int:
         return self._in_Time #미리 계산됨
 
-    @property
-    def _name_quantity_to_dict(self) -> dict:
+    @property 
+    def details(self) -> dict:
         dct_Ret: dict = {}
         if self.tpl_OrderList:
             for target in self.tpl_OrderList:
                 dct_Ret[target.item.code]=target.quantity
-        return dct_Ret # { "item01":1, "item02":3, ... }
+        return dct_Ret # DB 및 json { "item01":1, "item02":3, ... }
 
     @property
     def simplify(self) -> dict:
         return {
             "orderCode":self.order_to_string,
-            "orderDetails":self._name_quantity_to_dict,
+            "orderDetails":self.details,
         } # json 만들 때 사용함
 
 

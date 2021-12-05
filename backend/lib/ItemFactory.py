@@ -31,6 +31,7 @@ class ItemFactory(object):
     def lazy_init(self) -> dict[Items]:
         cls_DB: GetPutFmDB = GetPutFmDB()
         lst_Items: list = cls_DB.get_items() #DB의 Items테이블에서 정보를 받아온다
+        self.dct_Items = {}
 
         for itemInfo in lst_Items:
             self.dct_Items[itemInfo[0]] = Items(itemInfo)
@@ -40,6 +41,8 @@ class ItemFactory(object):
     # /start/v1에서 반환할 목록 초기화
     # lazy_init() 다음에 실행되어야 함.
     def lazy_init_item_list(self) -> bool:
+        self.lst_Data4Json = []
+
         try:
             self.lst_Data4Json = [ {
                 'itemClass':spec.category,
@@ -62,7 +65,7 @@ class ItemFactory(object):
         if sItemCode in self.dct_Items:
             return self.dct_Items[sItemCode]
 
-        return Items(('0000', '', '', 0, 0, 0, ''), bTraceCategory=False)
+        return Items(('0000', '', '', 0, 0, 0, ''), bTraceCategory=False) #찾는 게 없을 땐 기본 자료형 리턴
 
 
     @property #전체 items인스턴스들 리턴(수정 불가)
