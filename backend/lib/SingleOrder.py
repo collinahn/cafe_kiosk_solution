@@ -37,7 +37,6 @@ class SingleOrder(object):
     @property
     def _time(self) -> int:
         n_largest: int = 0
-        print(self.tpl_OrderList)
         if self.tpl_OrderList:
             for target in self.tpl_OrderList:
                 if target.item.time > n_largest:

@@ -60,7 +60,6 @@ class OrderManager(object):
         self.__is_DateLastCount = utils.get_today_YMD()
 
         n_OrderCnt = nForceOrderNo or self.__in_OrderCount # DB에 미체결 주문이 남아있는 경우 이전 주문 번호로 Force됨
-        print(tplOrder)
         return { 
             n_OrderCnt:SingleOrder(n_OrderCnt, tplOrder) 
         }
