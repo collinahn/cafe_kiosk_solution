@@ -23,6 +23,18 @@ def to_int(sData: str, sDebugData: str=None):
         Logger.CRITICAL("Cannot Convert Data to Int", sData, sDebugData, ve)
         return 0
 
+#이상 형식 감지 -> True
+def check_false_param(dctData: dict, dkArgs: dict, sExcept: str='') -> bool:
+        # 잘못된 값이 오면 abort
+        try:
+            for arg in dkArgs:
+                if arg!=sExcept and not dctData[arg]:
+                    return True
+        except KeyError as e:
+            Logger.ERROR('key error no key named', e, 'instead received', dctData.keys())
+            return True
+        return False
+
 class Node(object):
     def __init__(self, dData: dict) -> None:
         self.data = dData
@@ -38,9 +50,9 @@ class LinkedQueue(object):
         else:
             cls._instance = super().__new__(cls)
             cls.__mdict_MstInstance[sName] = cls._instance
-            cls.logger = Logger()
-    
-        cls.logger.INFO(cls._instance)
+            cls.logger = Logger()    
+            cls.logger.INFO(cls._instance)
+
         return cls._instance
 
     def __init__(self, sName: str="defaultQueue", *args) -> None:
@@ -51,7 +63,7 @@ class LinkedQueue(object):
             self._headPoint = None
             self._tailPoint = None
 
-        self.logger.INFO(f"Queue {sName} init")
+            self.logger.INFO(f"Queue {sName} init")
 
     # 연결리스트에 push
     def push(self, dData: dict) -> None:
@@ -113,7 +125,7 @@ class LinkedQueue(object):
         return s_Data2Str
 
     # 주문 대기열 전체를 리스트로 리턴한다.
-    # api에서 사용
+    # api 및 console_debug()에서 사용
     def to_json(self) -> list:
         p_Curs: Node = self._headPoint
         lst_Data: list = []
@@ -156,7 +168,7 @@ class LinkedQueue(object):
     # 취소할 수 있는 상황: 주문이 들어간 순서대로 확인하였을 때 5번째 이상인 경우
     # 즉 앞부터 확인하여 4개째 찾는 주문번호가 나오지 않는다면 true를 리턴하고 그게 아니면 false를 리턴한다.
     # 주문번호는 node.data(dict형 자료)의 key값이다.
-    def _check_cancellable(self, nOrderNo: int) -> bool:
+    def check_cancellable(self, nOrderNo: int) -> bool:
         b_Available: bool = False
         p_Curs: Node = self._headPoint
         n_Count: int = 0
@@ -244,7 +256,7 @@ class LinkedQueue(object):
     # 취소할 수 없으면 false를 리턴한다.
     def cancel_order(self, nOrderNo: int) -> bool:
 
-        if not self._check_cancellable(nOrderNo):
+        if not self.check_cancellable(nOrderNo):
             return False
         
         return self._detach(nOrderNo)
@@ -279,7 +291,7 @@ if __name__ == "__main__":
     lq.push({5:50})
     lq.push({6:60})
 
-    print(f"구현 이후 false가 나와야 함 = {lq._check_cancellable(4)}")
+    print(f"구현 이후 false가 나와야 함 = {lq.check_cancellable(4)}")
     lq.push({7:70})
     lq.push({8:80})
     lq.push({9:90})
@@ -289,7 +301,7 @@ if __name__ == "__main__":
     lq.pull()
     lq.pull()
 
-    print(f"구현 이후 true가 나와야 함 = {lq._check_cancellable(9)}")
+    print(f"구현 이후 true가 나와야 함 = {lq.check_cancellable(9)}")
 
     print(lq.to_string())
 
