@@ -13,8 +13,11 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended.view_decorators import jwt_required
 
 import backend.lib.constantsSE2 as const
+import backend.lib.UtilsSE2 as utils
+from backend.lib.LoggerSE2 import Logger
 from backend.lib.GetPutFmDB import GetPutFmDB
 
+log = Logger()
 Auth = Namespace('Auth')
 cls_DB = GetPutFmDB()
 
@@ -32,6 +35,10 @@ class CAuth(Resource):
     def post(self):
         dct_Input: dict = request.get_json()
 
+        # 잘못된 값이 오면 abort
+        if utils.check_false_param(dct_Input, post_auth_body.keys()):
+            return jsonify(const.SUCCESS_FALSE_RESPONSE)
+            
         if any(c in dct_Input['id'] for c in const.SQL_INJECTION_FILTER): #추가 유효성 검사
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
 

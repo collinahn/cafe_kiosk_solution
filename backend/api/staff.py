@@ -12,9 +12,10 @@ from flask_jwt_extended.view_decorators import jwt_required
 
 import backend.lib.UtilsSE2 as utils
 import backend.lib.constantsSE2 as const
+from backend.lib.LoggerSE2 import Logger
 from backend.lib.OrderManager import OrderManager
 
-
+log = Logger()
 Staff = Namespace('Staff')
 cls_Om = OrderManager()
 
@@ -40,6 +41,10 @@ class CStaff(Resource):
     @Staff.expect(post_staff_body)
     def post(self):
         dct_Input: dict = request.get_json()
+
+        # 잘못된 값이 오면 abort
+        if utils.check_false_param(dct_Input, post_staff_body.keys()):
+            return jsonify(const.SUCCESS_FALSE_RESPONSE)
 
         n_OrderCode = utils.to_int(dct_Input['orderCode'])
         n_RequestCode = dct_Input['status'] #2000 - 완료 4000 - 취소
