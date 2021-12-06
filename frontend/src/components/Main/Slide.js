@@ -1,6 +1,8 @@
 import React from "react";
 import Slider from "react-slick";
 import styled from "styled-components";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 export default function SimpleSlider({ menuArray }) {
   const settings = {
@@ -8,6 +10,7 @@ export default function SimpleSlider({ menuArray }) {
     infinite: false,
     slidesToShow: 3,
     slidesToScroll: 3,
+    arrows: false,
   };
 
   return (
@@ -33,6 +36,7 @@ const StyledSlider = styled(Slider)`
     box-shadow: 2px 2px 2px;
     width: 101px;
   }
+
   .slick-list {
     display: block;
     margin: 0 auto;
@@ -45,7 +49,6 @@ const SliderWrap = styled.div`
   background-color: #c7c7dd;
   display: flex;
   justify-content: center;
-  text-align: center;
 `;
 
 const WordsWrap = styled.p`
