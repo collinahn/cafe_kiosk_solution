@@ -49,6 +49,7 @@ class CAuth(Resource):
                 'jwt_token':create_access_token(identity=dct_Input['id'], expires_delta=False)
             })
 
+
         return jsonify(const.SUCCESS_FALSE_RESPONSE)
 
 
@@ -60,3 +61,4 @@ class CAuthTest(Resource):
         return jsonify({
             'success':True
         })
+      
