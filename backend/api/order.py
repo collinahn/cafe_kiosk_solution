@@ -64,7 +64,7 @@ class COrderCode(Resource):
     def get(self,orderCode):
         return jsonify({
             'success':True,
-            'isComplete':cls_Om.check_complete(int(orderCode))
+            'isComplete':not(cls_Om.check_complete(int(orderCode)))
         })
     
     @Order.doc(cnl_body=cancel_order_body)
@@ -80,7 +80,7 @@ class COrderCode(Resource):
         
         if b_CnlRequest:
             return jsonify({
-                'isCancellable':cls_Q._check_cancellable(int(orderCode)),
+                'isCancellable':cls_Q.check_cancellable(int(orderCode)),
                 'isCancelled':cls_Om.cancel_order_guest(int(orderCode))
                 })
 
