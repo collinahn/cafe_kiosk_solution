@@ -83,7 +83,7 @@ export default function Login(props) {
           <LoginButtonWrap type="submit">입장하기</LoginButtonWrap>
         </Form>
       </LoginWrap>
-      <LinkWrap to="/">
+      <LinkWrap to="/start">
         <ButtonWrap>초기 페이지로 이동</ButtonWrap>
       </LinkWrap>
     </>
