@@ -6,6 +6,11 @@
 # 2021.11.27 modified by 안태영: 
 #                        1) 객체 생성 시 실제 파일이 있는 지 체크, 생성자에서 테이블 생성하도록 수정
 #                        2) 공통적으로 사용하는 staticmethod 추가(시간 관련)
+# 2021.12.06 modified by 안태영:
+#                        1) db트랜젝션을 제어하기 위한 대부분의 함수 완성
+#                        2) TODO: 각 서브시스템별로 파일 분리하기
+#
+# TODO: order.py에 add_customer_info() 함수 반영한다
 
 import os
 import sqlite3
@@ -44,31 +49,32 @@ class GetPutFmDB(object):
         cls = type(self)
         if not hasattr(cls, "_init"):
             conn: Connection = None
-            lst_CreateQuery: list[str] = []
-
-            lst_CreateQuery.append("CREATE TABLE IF NOT EXISTS tStaff ( \
-                                    staffID TEXT PRIMARY KEY NOT NULL, \
-                                    staffPW TEXT NOT NULL, \
-                                    staffTLA TEXT NOT NULL \
-                                    );") #Staff 로그인 테이블 생성
-            lst_CreateQuery.append("CREATE TABLE IF NOT EXISTS tAdmin ( \
-                                    adminID TEXT PRIMARY KEY NOT NULL, \
-                                    adminPW TEXT NOT NULL, \
-                                    adminTLA TEXT NOT NULL \
-                                    );") #Admin 로그인 테이블 생성
-            lst_CreateQuery.append("CREATE TABLE IF NOT EXISTS tCustomer ( \
-                                    orderNo INT PRIMARY KEY NOT NULL, \
-                                    customerID TEXT NOT NULL \
-                                    );") #주문 고객 정보 테이블 생성
-            lst_CreateQuery.append("CREATE TABLE IF NOT EXISTS tMstItems ( \
-                                    itemCode TEXT PRIMARY KEY NOT NULL, \
-                                    itemName TEXT NOT NULL, \
-                                    category TEXT NOT NULL, \
-                                    itemPrice INT NOT NULL, \
-                                    timeEst INT NOT NULL, \
-                                    availability INT NOT NULL, \
-                                    imgSrc TEXT NOT NULL DEFAULT '/' \
-                                    );") #상품 테이블 생성
+            lst_CreateQuery: list[str] = [
+                "CREATE TABLE IF NOT EXISTS tStaff ( \
+                    staffID TEXT PRIMARY KEY NOT NULL, \
+                    staffPW TEXT NOT NULL, \
+                    staffTLA TEXT NOT NULL \
+                );", #Staff 로그인 테이블 생성
+                "CREATE TABLE IF NOT EXISTS tAdmin ( \
+                    adminID TEXT PRIMARY KEY NOT NULL, \
+                    adminPW TEXT NOT NULL, \
+                    adminTLA TEXT NOT NULL \
+                );", #Admin 로그인 테이블 생성
+                "CREATE TABLE IF NOT EXISTS tCustomer ( \
+                    orderNo INT PRIMARY KEY NOT NULL, \
+                    customerID TEXT NOT NULL, \
+                    customerIP TEXT NOT NULL \
+                );", #주문 고객 정보 테이블 생성
+                "CREATE TABLE IF NOT EXISTS tMstItems ( \
+                    itemCode TEXT PRIMARY KEY NOT NULL, \
+                    itemName TEXT NOT NULL, \
+                    category TEXT NOT NULL, \
+                    itemPrice INT NOT NULL, \
+                    timeEst INT NOT NULL, \
+                    availability INT NOT NULL, \
+                    imgSrc TEXT NOT NULL DEFAULT '/' \
+                );" #상품 테이블 생성
+            ]
 
             try:
                 conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None) 
@@ -139,6 +145,28 @@ class GetPutFmDB(object):
                 conn.close()
 
         return lst_Ret # [('상품코드', '상품이름', '카테고리', 가격, 조리시간, 품절 여부, '위치'), ...]
+
+    # admin api에서 사용
+    def add_items(self, tplSpec: tuple) -> bool:
+        conn: Connection = None
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            curs = conn.cursor()
+            query = "INSERT INTO tMstItems\
+                    (itemCode, itemName, category, itemPrice, timeEst, availability, imgSrc) \
+                    Values(?,?,?,?,?,?,?);"
+            curs.execute(query, (tplSpec))
+            conn.close()
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+            if conn:
+                conn.close()
+            return False
+        
+        return True
 
     # 주문을 받았을 시 기록한다.
     def add_tHistOrder(self, nOrderNo: int, dctDetail: dict, nTimeEstimate: int, sStatus: str='on'):
@@ -212,8 +240,96 @@ class GetPutFmDB(object):
         if not lst_Ret[0]:
             return False
 
-        return lst_Ret[0][1] == sPW 
+        return lst_Ret[0][1] == sPW
 
+    #고객 이용 정보 내역을 저장하는 테이블은 일자마다 새로 생성한다
+    def create_tCustomer(self):
+        conn: Connection = None
+        s_TblName = self.get_table_name_tody(sType='Customer')
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            curs = conn.cursor()
+            query = f"CREATE TABLE IF NOT EXISTS {s_TblName} ( \
+                        orderNo INT PRIMARY KEY NOT NULL, \
+                        customerID TEXT NOT NULL, \
+                        customerIP TEXT NOT NULL);"
+            curs.execute(query)
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+    # 주문 시 주문자 정보를 기록한다
+    def add_customer_info(self, nOrderNo: int, sMacAddress: str, sIPAdress: str):
+        conn: Connection = None
+        s_TblName = self.get_table_name_tody(sType='Customer')
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            curs = conn.cursor()
+            query = f"INSERT INTO {s_TblName}\
+                    (orderNo, customerID, customerIP) \
+                    Values(?,?,?);"
+            curs.execute(query, (nOrderNo, sMacAddress, sIPAdress))
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+    # 프로그램 재 시작시 필요한 사항(orderCnt) 체크
+    def check_db_order_count(self) -> int:
+        conn: Connection = None
+        lst_Ret: list = []
+        s_TblName: str = self.get_table_name_tody()
+
+        self.create_tHistOrder()
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            curs = conn.cursor()
+            query = f"SELECT * FROM {s_TblName} ORDER BY ROWID DESC LIMIT 1;"
+            curs.execute(query)
+            lst_Ret = curs.fetchall()
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+        return lst_Ret[0][0] if lst_Ret else 0
+
+
+    # 프로그램 재 시작시 필요한 사항(완료되지 않은 주문) 체크
+    def check_db_unhandled_order(self) -> list or None:
+        conn: Connection = None
+        lst_Ret: list = []
+        s_TblName: str = self.get_table_name_tody()
+
+        self.create_tHistOrder()
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            curs = conn.cursor()
+            query = f"SELECT * FROM {s_TblName} \
+                        WHERE `status`=? \
+                        ORDER BY ROWID;"
+            curs.execute(query, ('on', ))
+            lst_Ret = curs.fetchall()
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
+
+        return lst_Ret or None
 
 
 if __name__ == '__main__':
@@ -227,3 +343,9 @@ if __name__ == '__main__':
     }, 15)
 
     db.add_result_tHistOrder(1,"completed")
+
+    db.create_tCustomer()
+    db.add_customer_info(100,'mad12jqlkdqjlk','0.0.0.0')
+
+    print(db.check_db_order_count())
+    print(db.check_db_unhandled_order())

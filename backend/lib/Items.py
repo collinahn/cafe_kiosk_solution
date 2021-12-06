@@ -19,7 +19,7 @@ class Items(object):
     __mset_MstCode: set[str] = set() # 초기화 기록용
     __mset_MstCategory: set[str] = set() # 상품코드 추적
 
-    def __new__(cls, tplItemInfo: tuple, sItemCode: str=None):
+    def __new__(cls, tplItemInfo: tuple, sItemCode: str=None, bTraceCategory: bool=True, *args):
         #튜플로 생성, str으로 조회
         if sItemCode and sItemCode in cls.__mdct_MstInstance: # 아이템 코드로 호출
             cls._instance = cls.__mdct_MstInstance[sItemCode]
@@ -39,7 +39,7 @@ class Items(object):
         cls.logger.INFO(cls._instance)
         return cls._instance
 
-    def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int,str], *args) -> None:
+    def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int,str], *args, bTraceCategory: bool=True) -> None:
         cls = type(self)
         if tpleItemInfo[0] not in cls.__mset_MstCode:
 
@@ -48,13 +48,14 @@ class Items(object):
             self._s_Category = tpleItemInfo[2]
             self._n_Price = tpleItemInfo[3]
             self._n_Time = tpleItemInfo[4]
-            self._b_Avail = ( tpleItemInfo[5] == 0 )
+            self._b_Avail = ( tpleItemInfo[5] != 0 )
             self._s_Url = tpleItemInfo[6]
 
             self.logger.INFO(f"Item {self._s_Code} init")
 
             cls.__mset_MstCode.add(self._s_Code)
-            cls.__mset_MstCategory.add(self._s_Category) # 카테고리 추적
+            if bTraceCategory: # 더미 데이터 거르기 위함
+                cls.__mset_MstCategory.add(self._s_Category) # 카테고리 추적
 
     def __del__(self):
         print(f"{self.code} collected")
@@ -67,7 +68,7 @@ class Items(object):
     @classmethod
     def get_categories(cls) -> set:
         # 보유중인 카테고리를 확인
-        return cls.__mset_MstCategory
+        return list(cls.__mset_MstCategory)
 
     @property
     def code(self) -> str:
