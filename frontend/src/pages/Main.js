@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Header from "../components/common/Header";
-import Toggle from "../components/common/Toggle";
 import MenuList from "../components/common/MenuList";
 import Cart from "../components/Main/Cart";
 import "../assets/css/Manager.css";
 import axios from "axios";
+import "../assets/css/Main.css";
 
 const cartArray = [
   {
@@ -37,6 +37,42 @@ const cartArray = [
     name: "크림빵",
     price: 2500,
   },
+  {
+    id: 6,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
+  {
+    id: 7,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
+  {
+    id: 8,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
+  {
+    id: 9,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
+  {
+    id: 10,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
+  {
+    id: 11,
+    category: "베이커리",
+    name: "크림빵",
+    price: 2500,
+  },
 ];
 
 const Main = () => {
@@ -57,7 +93,7 @@ const Main = () => {
   });
 
   const BakeryList = cartArray.filter((data) => {
-    return data.categpry === "베이커리";
+    return data.category === "베이커리";
   });
 
   const AdeList = cartArray.filter((data) => {
@@ -67,9 +103,8 @@ const Main = () => {
   return (
     <>
       <Header />
-      {/* <Toggle MenuArray={["커피", "에이드", "베이커리", "디저트"]} /> */}
       <MenuList menuArray={cartArray} />
-      <Cart menuArray={DeesertList} />
+      <Cart menuArray={BakeryList} />
     </>
   );
 };
