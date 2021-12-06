@@ -22,7 +22,7 @@ export default function App() {
     <div>
       <Route path="/main" component={Main} />
       <Route path="/manager" component={Manager} />
-      <Route exact path="/" component={Start} />
+      <Route exact path="/start" component={Start} />
       <Route
         path="/login"
         render={(props) => (

@@ -14,7 +14,7 @@ export default function Login(props) {
   const joinHandler = (e) => {
     e.preventDefault();
     try {
-      const data = { Id, Password };
+      const data = { id: Id, pw: Password };
       axios
         .post("/auth/", JSON.stringify(data), {
           headers: {
