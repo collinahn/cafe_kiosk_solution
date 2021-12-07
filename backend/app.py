@@ -40,7 +40,8 @@ api = Api(
 ) #api정보입력
 
 # enable CORS
-CORS(app, resources={r'/*': {'origins': '*'}})
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
+cors = CORS(app, origins=['*', '*'], allow_headers=['*', '*'], expose_headers=['content-type', '*'])
 
 # 내부 로직이 가동되기 전에 초기화한다
 initialize_distributed_kiosk_system()
