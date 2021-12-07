@@ -27,7 +27,7 @@ post_staff_body = Staff.model('Resource-Staff', {
 @Staff.route('/')
 class CStaff(Resource):
 
-    @jwt_required()
+    # @jwt_required()
     @Staff.response(200, 'Success')
     @Staff.response(204, 'Empty Queue')
     def get(self):
@@ -36,14 +36,14 @@ class CStaff(Resource):
             'queue':cls_Om.queue.to_json()
         })
 
-    @jwt_required()
+    # @jwt_required()
     @Staff.doc(body=post_staff_body)
     @Staff.expect(post_staff_body)
     def post(self):
         dct_Input: dict = request.get_json()
 
         # 잘못된 값이 오면 abort
-        if utils.check_false_param(dct_Input, post_staff_body.keys()):
+        if not utils.check_params(dct_Input, post_staff_body.keys()):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
 
         n_OrderCode = utils.to_int(dct_Input['orderCode'])
