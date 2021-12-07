@@ -14,7 +14,6 @@
 # pip install flask flask_restx flask_jwt_extended flask_cors
 
 from flask import Flask
-from flask_restx import Resource
 from flask_restx import Api
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
@@ -25,7 +24,6 @@ from backend.api.auth import Auth
 from backend.api.order import Order
 from backend.api.staff import Staff
 from backend.api.start import Start
-from backend.lib.ItemFactory import ItemFactory
 from backend.setup import initialize_distributed_kiosk_system
 from backend.setup import debug_console
 
@@ -34,7 +32,7 @@ api = Api(
     app,
     version='1.0',
     title='Distributed Kiosk Solution',
-    description='',
+    description='Swagger',#"현 페이지는 Swagger API문서 상세 페이지입니다. React의 index.html을 불러오려면 다음 페이지로 이동하세요: 127.0.0.1:5000/start (로컬 실행의 경우)",
     terms_url='/',
     contact='collinahn@hufs.ac.kr',
     license='MIT',
@@ -54,7 +52,6 @@ api.add_namespace(Auth, '/auth')
 api.add_namespace(Order, '/order')
 api.add_namespace(Staff, '/staff')
 
-
 # 콘솔에서 디버깅할 수 있도록 하는 도구
 Thread(target=debug_console, daemon=False).start()
 
@@ -68,7 +65,7 @@ app.config.update(
 jwt = JWTManager(app)
 
 
-@app.route('/main')
+@app.route('/start')
 def index():
     return app.send_static_file("index.html")
 
