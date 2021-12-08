@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Route } from "react-router-dom";
 import Manager from "../src/pages/Manager";
 import Main from "../src/pages/Main";
@@ -20,7 +20,7 @@ export default function App() {
       <Route exact path="/login" component={Login} />
       <Route path="/complete" component={Complete} />
       <Route path="/order" component={Order} />
-      <Route path="/StaffLogin" component={StaffLogin} />
+      <Route exact path="/StaffLogin" component={StaffLogin} />
       <Route path="/Staff" component={Staff} />
       <Route path="/Ready" component={Ready} />
     </div>

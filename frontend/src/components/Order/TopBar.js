@@ -2,21 +2,19 @@ import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
-const TopBar= () => {
-
-    return (
-        <div>
-        <BarWrap>
-            <ButtonWrap> 
-                <LinkWrap to="/start">
-                    <RestartButtonWrap>돌아가기</RestartButtonWrap>
-                </LinkWrap>
-            </ButtonWrap>
-
-            <InnerBarWrap>장바구니</InnerBarWrap>
-        </BarWrap>
-        </div>               
-    );
+const TopBar = () => {
+  return (
+    <>
+      <BarWrap>
+        <ButtonWrap>
+          <LinkWrap to="/start">
+            <RestartButtonWrap>돌아가기</RestartButtonWrap>
+          </LinkWrap>
+        </ButtonWrap>
+        <InnerBarWrap>장바구니</InnerBarWrap>
+      </BarWrap>
+    </>
+  );
 };
 
 export default TopBar;
@@ -24,7 +22,7 @@ export default TopBar;
 const BarWrap = styled.div`
   display: flex;
   border-bottom: 2px solid black;
-  background-color: #E9E9FE;
+  background-color: #e9e9fe;
   padding: 5px;
 `;
 
@@ -58,4 +56,3 @@ const RestartButtonWrap = styled.div`
   font-size: 12px;
   text-align: center;
 `;
-
