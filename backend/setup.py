@@ -4,7 +4,7 @@ from backend.lib.GetPutFmDB import GetPutFmDB
 from backend.lib.ItemFactory import ItemFactory
 from backend.lib.Items import Items, Items4Order
 from backend.lib.OrderManager import OrderManager
-from backend.lib.SingleOrder import SingleOrder
+from backend.lib.GetPutFmDB import GetPutFmDB
 from backend.lib.UtilsSE2 import LinkedQueue
 from backend.lib.LoggerSE2 import Logger
 
@@ -47,6 +47,7 @@ def debug_console() -> None:
     cls_Lq = LinkedQueue()
     cls_Om = OrderManager()
     cls_If = ItemFactory()
+    cls_Db = GetPutFmDB()
 
     while True:
         sInput = input()
@@ -59,7 +60,8 @@ def debug_console() -> None:
             lst_ItemID = list(map(str, input("specify your options: ").split()))
             if any(id in lst_ItemID for id in dct_Items):
                 tpl_Order = tuple( Items4Order(item, 5) for item in lst_ItemID )
-                cls_Om.push_order(tpl_Order)
+                s_OrderNo: str = cls_Om.push_order(tpl_Order)
+                cls_Db.add_customer_info(s_OrderNo, "LOCALHOST(DEBUG_CONSOLE)")
                 # logger.DEBUG(tpl_Order[0].item.name) #아이템 이름
                 # logger.DEBUG(tpl_Order[0].quantity)  #아이템 수량
             else:
@@ -80,3 +82,13 @@ def debug_console() -> None:
             sCode = input("input order code to cancel = ")
             cls_Om.cancel_order_staff(int(sCode))
             logger.DEBUG(f"{cls_Lq.to_json() = }")
+
+
+        elif sInput == "cancel all":
+            logger.DEBUG("cancelling all orders, proceed? (Y/n)")
+            sAns = input()
+            if sAns in ['y', 'Y']:
+                for a in cls_Lq.to_json():
+                    cls_Om.cancel_order_staff(int(a['orderCode']))
+            else:
+                logger.DEBUG("abort")

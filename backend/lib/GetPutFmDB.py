@@ -85,6 +85,9 @@ class GetPutFmDB(object):
                     curs.execute(query)
 
                 self.logger.INFO("DB init")
+                
+                from backend.lib.OrderManager import OrderManager
+                self.cls_Om = OrderManager()
                 cls._init = True
 
             except sqlite3.Error as e: 
@@ -267,6 +270,10 @@ class GetPutFmDB(object):
         conn: Connection = None
         s_TblName = self.get_table_name_tody(sType='Customer')
 
+        # 그 날의 첫 주문이면 테이블을 새로 만든다
+        if self.cls_Om.init_required:
+            self.create_tCustomer()
+
         try:
             conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
             conn.row_factory = sqlite3.Row
@@ -330,22 +337,86 @@ class GetPutFmDB(object):
                 conn.close()
 
         return lst_Ret or None
+    
+    def update_last_access(self, sID: str, bIsAdmin: bool) -> None:
+        conn: Connection = None
+        s_TblName = 'tAdmin' if bIsAdmin else 'tStaff'
+        s_ColumnTLA = 'adminTLA' if bIsAdmin else 'staffTLA'
+        s_ColumnID = 'adminID' if bIsAdmin else 'staffID'
+        s_Now = self.get_now_time()
+
+        try:
+            conn = sqlite3.connect(const.DB_FILE_PATH, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            curs = conn.cursor()
+            query = f"UPDATE {s_TblName} \
+                    SET `{s_ColumnTLA}`=? \
+                    WHERE `{s_ColumnID}`=?;"
+            curs.execute(query, (s_Now, sID))
+
+        except sqlite3.Error as e: 
+            self.logger.ERROR(e)
+        finally:
+            if conn: 
+                conn.close()
 
 
 if __name__ == '__main__':
-    db = GetPutFmDB()
+    # db = GetPutFmDB()
 
-    print(db.get_items())
+    # print(db.get_items())
 
-    db.create_tHistOrder()
-    db.add_tHistOrder(1, {
-        "items001": 1, "items003":2
-    }, 15)
+    # db.create_tHistOrder()
+    # db.add_tHistOrder(1, {
+    #     "items001": 1, "items003":2
+    # }, 15)
 
-    db.add_result_tHistOrder(1,"completed")
+    # db.add_result_tHistOrder(1,"completed")
 
-    db.create_tCustomer()
-    db.add_customer_info(100,'mad12jqlkdqjlk','0.0.0.0')
+    # db.create_tCustomer()
+    # db.add_customer_info(100,'mad12jqlkdqjlk','0.0.0.0')
 
-    print(db.check_db_order_count())
-    print(db.check_db_unhandled_order())
+    # print(db.check_db_order_count())
+    # print(db.check_db_unhandled_order())
+
+
+    # 이하는 db에 값을 채우기 위한 스크립트
+    def add_items(lstItemSpecs: tuple) -> bool:
+        conn: Connection = None
+
+        try:
+            conn = sqlite3.connect('./backend/'+const.DB_FILE_PATH, isolation_level=None)
+            conn.row_factory = sqlite3.Row
+            curs = conn.cursor()
+            query = "INSERT OR IGNORE INTO tMstItems\
+                    Values(?,?,?,?,?,?,?);"
+            curs.executemany(query, (lstItemSpecs))
+            conn.close()
+
+        except sqlite3.Error as e: 
+            print(e)
+            if conn:
+                conn.close()
+            return False
+        
+        return True
+
+    # (itemCode, itemName, category, itemPrice, timeEst, availability, imgSrc) 
+    lst_Param: list = []
+    n_Seq: int = 1
+    for category in ['브런치','디저트','커피','음료']:
+        for i in range(15):
+            tpl_Ret: tuple = (
+                'item'+str(n_Seq),
+                '메뉴이름'+str(n_Seq),
+                category,
+                int((100000/n_Seq + i*500)/100)*100,
+                60-n_Seq,
+                1,
+                'img/default.svg'
+            )
+            n_Seq += 1
+            lst_Param.append(tpl_Ret)
+
+
+    add_items(lst_Param)

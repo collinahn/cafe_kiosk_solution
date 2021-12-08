@@ -24,8 +24,8 @@ cls_Db = GetPutFmDB()
 
 post_order_body = Order.model('Resource-Order', {
     'order':fields.Raw({
-        'cake001':1,
-        'drink001':100
+        'item1':1,
+        'item11':3
         })
     })
 
@@ -50,8 +50,6 @@ class COrder(Resource):
         s_OrderNo: str = cls_Om.push_order(tpl_Order)
 
         # 주문자 정보를 입력한다.
-        if cls_Om.init_required:
-            cls_Db.create_tCustomer()
         s_IpAddr: str = request.environ['REMOTE_ADDR'] if request.environ.get('HTTP_X_FORWARDED_FOR') is None else request.environ['HTTP_X_HTTP_X_FORWARDED_FOR']
         cls_Db.add_customer_info(s_OrderNo, sIPAdress=s_IpAddr)
 
