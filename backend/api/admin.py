@@ -24,13 +24,13 @@ cls_If = ItemFactory()
 
 
 post_admin_body = Admin.model('Resource-Admin', {
-    'code':fields.String('item001'),
-    'name':fields.String('an item'),
-    'category':fields.String('item'),
-    'price':fields.Integer(1000),
+    'code':fields.String('item61'),
+    'name':fields.String('coffee61'),
+    'category':fields.String('커피'),
+    'price':fields.Integer(5000),
     'time':fields.Integer(10),
     'avail':fields.Boolean(True),
-    'url':fields.String('./item001.jpg'),
+    'url':fields.String('img/default.svg'),
     'init':fields.Boolean(True)
 })
 
