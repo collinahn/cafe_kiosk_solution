@@ -12,142 +12,156 @@ import TiramisuDacquoise from "../../assets/image/TiramisuDacquoise.svg";
 import styled from "styled-components";
 import axios from "axios";
 
-const TitleArray = ["커피", "디저트", "베이커리", "에이드"];
+const TitleArray = ["케이크", "음료수", "주류"];
 
-const menuArray = [
-  {
-    id: 1,
-    itemClass: "커피",
-    itemCode: "item001",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 2,
-    itemClass: "커피",
-    itemCode: "item002",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 3,
-    itemClass: "에이드",
-    itemCode: "item003",
-    itemName: "사과에이드",
-    itemPrice: "5,200원",
-    thumbnail: AppleAde,
-  },
-  {
-    id: 4,
-    itemClass: "커피",
-    itemCode: "item004",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 5,
-    itemClass: "디저트",
-    itemCode: "item005",
-    itemName: "다쿠아즈",
-    itemPrice: "2,500원",
-    thumbnail: Dacquoise,
-  },
-  {
-    id: 6,
-    itemClass: "디저트",
-    itemCode: "item006",
-    itemName: "마카롱",
-    itemPrice: "2,500원",
-    thumbnail: Americano,
-  },
-  {
-    id: 7,
-    itemClass: "에이드",
-    itemCode: "item007",
-    itemName: "그린애플에이드(ICE)",
-    itemPrice: "5,200원",
-    thumbnail: GreenAppleAde,
-  },
-  {
-    id: 8,
-    itemClass: "베이커리",
-    itemCode: "item008",
-    itemName: "크림빵",
-    itemPrice: "1,800원",
-    thumbnail: Americano,
-  },
-  {
-    id: 9,
-    itemClass: "베이커리",
-    itemCode: "item009",
-    itemName: "앙버터다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: ButterDacquoise,
-  },
-  {
-    id: 10,
-    itemClass: "베이커리",
-    itemCode: "item010",
-    itemName: "초코가나슈다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: ChocoDacquoise,
-  },
-  {
-    id: 11,
-    itemClass: "베이커리",
-    itemCode: "item011",
-    itemName: "크림브륄레다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: CreamDacquoise,
-  },
-  {
-    id: 12,
-    itemClass: "베이커리",
-    itemCode: "item012",
-    itemName: "핑크솔트다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: PinkSaltDacquoise,
-  },
-  {
-    id: 13,
-    itemClass: "베이커리",
-    itemCode: "item013",
-    itemName: "산딸기앙글레이즈다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: StrawberryDacquoise,
-  },
-  {
-    id: 14,
-    itemClass: "베이커리",
-    itemCode: "item014",
-    itemName: "티라미수더블다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: TiramisuDacquoise,
-  },
-];
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://127.0.0.1:5000";
+
+// const menuArray = [
+//   {
+//     id: 1,
+//     itemClass: "커피",
+//     itemCode: "item001",
+//     itemName: "아메리카노(ICE)",
+//     itemPrice: "4,100원",
+//     thumbnail: Americano,
+//   },
+//   {
+//     id: 2,
+//     itemClass: "커피",
+//     itemCode: "item002",
+//     itemName: "아메리카노(ICE)",
+//     itemPrice: "4,100원",
+//     thumbnail: Americano,
+//   },
+//   {
+//     id: 3,
+//     itemClass: "에이드",
+//     itemCode: "item003",
+//     itemName: "사과에이드",
+//     itemPrice: "5,200원",
+//     thumbnail: AppleAde,
+//   },
+//   {
+//     id: 4,
+//     itemClass: "커피",
+//     itemCode: "item004",
+//     itemName: "아메리카노(ICE)",
+//     itemPrice: "4,100원",
+//     thumbnail: Americano,
+//   },
+//   {
+//     id: 5,
+//     itemClass: "디저트",
+//     itemCode: "item005",
+//     itemName: "다쿠아즈",
+//     itemPrice: "2,500원",
+//     thumbnail: Dacquoise,
+//   },
+//   {
+//     id: 6,
+//     itemClass: "디저트",
+//     itemCode: "item006",
+//     itemName: "마카롱",
+//     itemPrice: "2,500원",
+//     thumbnail: Americano,
+//   },
+//   {
+//     id: 7,
+//     itemClass: "에이드",
+//     itemCode: "item007",
+//     itemName: "그린애플에이드(ICE)",
+//     itemPrice: "5,200원",
+//     thumbnail: GreenAppleAde,
+//   },
+//   {
+//     id: 8,
+//     itemClass: "베이커리",
+//     itemCode: "item008",
+//     itemName: "크림빵",
+//     itemPrice: "1,800원",
+//     thumbnail: Americano,
+//   },
+//   {
+//     id: 9,
+//     itemClass: "베이커리",
+//     itemCode: "item009",
+//     itemName: "앙버터다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: ButterDacquoise,
+//   },
+//   {
+//     id: 10,
+//     itemClass: "베이커리",
+//     itemCode: "item010",
+//     itemName: "초코가나슈다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: ChocoDacquoise,
+//   },
+//   {
+//     id: 11,
+//     itemClass: "베이커리",
+//     itemCode: "item011",
+//     itemName: "크림브륄레다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: CreamDacquoise,
+//   },
+//   {
+//     id: 12,
+//     itemClass: "베이커리",
+//     itemCode: "item012",
+//     itemName: "핑크솔트다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: PinkSaltDacquoise,
+//   },
+//   {
+//     id: 13,
+//     itemClass: "베이커리",
+//     itemCode: "item013",
+//     itemName: "산딸기앙글레이즈다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: StrawberryDacquoise,
+//   },
+//   {
+//     id: 14,
+//     itemClass: "베이커리",
+//     itemCode: "item014",
+//     itemName: "티라미수더블다쿠아즈",
+//     itemPrice: "2,800원",
+//     thumbnail: TiramisuDacquoise,
+//   },
+// ];
 
 export default function MenuList() {
   const [menu, setMenu] = useState(TitleArray[0]);
-  const CoffeeList = menuArray.filter((data) => {
-    return data.itemClass === "커피";
+
+  const [APImenu, setAPImenu] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("/start/v1")
+      .then((res) => {
+        setAPImenu(res.data.data);
+        console.log("불러오기 성공");
+        console.log(APImenu);
+      })
+      .catch((err) => console.error(err))
+      .finally(console.log(APImenu));
+  }, []);
+
+  const CakeList = APImenu.filter((data) => {
+    return data.itemClass === "cake";
   });
 
-  const DeesertList = menuArray.filter((data) => {
-    return data.itemClass === "디저트";
+  const DrinkList = APImenu.filter((data) => {
+    return data.itemClass === "drink";
   });
 
-  const BakeryList = menuArray.filter((data) => {
-    return data.itemClass === "베이커리";
+  const AlcoholList = APImenu.filter((data) => {
+    return data.itemClass === "alcohol";
   });
 
-  const AdeList = menuArray.filter((data) => {
-    return data.itemClass === "에이드";
-  });
-
-  let [targetArray, setTargetArray] = useState(CoffeeList);
+  let [targetArray, setTargetArray] = useState(CakeList);
 
   // const [menu, setMenu] = useState([]);
 
@@ -178,14 +192,12 @@ export default function MenuList() {
   const handleButtonClick = (e) => {
     setMenu(e.target.value);
     console.log(e.target.value);
-    if (e.target.value === "커피") {
-      setTargetArray(CoffeeList);
-    } else if (e.target.value === "에이드") {
-      setTargetArray(AdeList);
-    } else if (e.target.value === "디저트") {
-      setTargetArray(DeesertList);
-    } else if (e.target.value === "베이커리") {
-      setTargetArray(BakeryList);
+    if (e.target.value === "케이크") {
+      setTargetArray(CakeList);
+    } else if (e.target.value === "음료수") {
+      setTargetArray(DrinkList);
+    } else if (e.target.value === "주류") {
+      setTargetArray(AlcoholList);
     }
   };
 

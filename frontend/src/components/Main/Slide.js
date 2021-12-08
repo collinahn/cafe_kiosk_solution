@@ -12,19 +12,22 @@ export default function SimpleSlider({ menuArray }) {
     slidesToScroll: 3,
     arrows: false,
   };
-
   return (
     <div>
       <StyledSlider {...settings}>
-        {menuArray.map((menu) => (
-          <>
-            {menu.price > 0 && (
-              <SliderWrap>
-                <WordsWrap>{menu.name}</WordsWrap>
+        {menuArray.length > 0 ? (
+          menuArray.map((menu, idx) => (
+            <>
+              <SliderWrap key={idx}>
+                <WordsWrap key={idx}>{menu.itemName}</WordsWrap>
               </SliderWrap>
-            )}
+            </>
+          ))
+        ) : (
+          <>
+            <EmptyWrap />
           </>
-        ))}
+        )}
       </StyledSlider>
     </div>
   );
@@ -33,15 +36,20 @@ export default function SimpleSlider({ menuArray }) {
 const StyledSlider = styled(Slider)`
   .slick-slide div {
     margin: 5px;
-    box-shadow: 2px 2px 2px;
     width: 101px;
   }
 
   .slick-list {
     display: block;
     margin: 0 auto;
-    margin-bottom: 25px;
+    padding-bottom: 25px;
   }
+`;
+
+const EmptyWrap = styled.div`
+  height: 88px;
+  visibility: hidden;
+  appearance: none;
 `;
 
 const SliderWrap = styled.div`

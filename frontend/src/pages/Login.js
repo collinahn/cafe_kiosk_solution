@@ -6,7 +6,6 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://127.0.0.1:5000";
-
 export default function Login(props) {
   const [Id, setId] = useState("");
   const [Password, setPassword] = useState("");
@@ -14,19 +13,20 @@ export default function Login(props) {
   const joinHandler = (e) => {
     e.preventDefault();
     try {
-      const data = { id: Id, pw: Password };
+      const data = { id: Id, pw: Password, actor: "manager" };
       axios
         .post("/auth/", JSON.stringify(data), {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true,
         })
         .then((res) => {
+          console.log(JSON.stringify(res));
           console.log("res.data.accessToken : " + res.data);
+          console.log(res.data);
           axios.defaults.headers.common["Authorization"] = "Bearer " + res.data;
           props.loginCallBack(true);
-          props.history.push("/main");
+          props.history.push("/manager");
         })
         .catch((ex) => {
           console.log("login request fail: " + ex);
@@ -39,16 +39,14 @@ export default function Login(props) {
 
   useEffect(() => {
     console.log("LoginPage render ...");
-  });
+  }, []);
 
   const onIdHandler = (event) => {
     setId(event.currentTarget.value);
-    console.log("Id", Id);
   };
 
   const onPasswordHandler = (event) => {
     setPassword(event.currentTarget.value);
-    console.log("Password", Password);
   };
 
   return (

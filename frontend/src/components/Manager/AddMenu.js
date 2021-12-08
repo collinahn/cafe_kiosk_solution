@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import useInput from "../../Hooks/useInput";
 import axios from "axios";
 
-const add_menu_list = [];
 let pwd = "1234";
-const AddMenu = () => {
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://127.0.0.1:5000";
+export default function AddMenu() {
   const [disabled, setDisabled] = useState(false);
   const [showPopupMenu, setShowPopupMenu] = useState(false);
   const [itemname, onChangeItemName] = useInput("");
@@ -21,21 +22,21 @@ const AddMenu = () => {
     e.preventDefault();
     await new Promise((r) => setTimeout(r, 1000));
     if (pwd === password) {
-      // axios
-      //   .post(
-      //     "start/v1",
-      //     { itemname, itemCode, itemPrice, itemClass, finishTime },
-      //     { withCredentials: true }
-      //   )
-      //   .then((response) => {
-      //     console.log(response);
-      //     alert("등록되었습니다");
-      //     setShowPopupMenu(false);
-      //   })
-      //   .catch((err) => {
-      //     alert("Error!");
-      //     console.error(err);
-      //   });
+      axios
+        .post(
+          "start/v1",
+          { itemname, itemCode, itemPrice, itemClass, finishTime },
+          { withCredentials: true }
+        )
+        .then((response) => {
+          console.log(response);
+          alert("등록되었습니다");
+          setShowPopupMenu(false);
+        })
+        .catch((err) => {
+          alert("Error!");
+          console.error(err);
+        });
       alert("등록되었습니다");
       setDisabled(false);
       setShowPopupMenu(false);
@@ -89,7 +90,8 @@ const AddMenu = () => {
               <LabelForInput htmlFor="thumbnails">사진 업로드</LabelForInput>
               <br />
               <input
-                type="thumbnail"
+                type="file"
+                name="thumbnail"
                 id="thumbnails"
                 style={{ display: "none" }}
                 onChange={onChangeThumbnail}
@@ -136,9 +138,7 @@ const AddMenu = () => {
       <AddButtonWrap onClick={togglePopup}>추가하기</AddButtonWrap>
     </>
   );
-};
-
-export default AddMenu;
+}
 
 const SpaceWrap = styled.div`
   visibility: hidden;
