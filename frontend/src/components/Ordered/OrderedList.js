@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import axios from "axios";
+import OrderedListTemplate from "./OrderedListTemplate";
 
 export default function OrderedList() {
-  const [data, setData] = useState(null);
+  const [inputs, setInputs] = useState({
+    orderedNo: "",
+    orderedItems: "",
+    orderedTime: "",
+    orderConfirmed: "",
+    cancelasked: "",
+  });
 
   const [ordered, setOrdered] = useState([
     {
@@ -12,6 +18,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 21:29",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 2,
@@ -19,6 +26,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 21:31",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 3,
@@ -26,6 +34,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 21:32",
       orderConfirmed: true,
+      cancelasked: false,
     },
     {
       id: 4,
@@ -33,6 +42,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 21:33",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 5,
@@ -40,6 +50,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:00",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 6,
@@ -47,6 +58,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:09",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 7,
@@ -54,6 +66,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:14",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 8,
@@ -61,6 +74,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:19",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 9,
@@ -68,6 +82,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:25",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 10,
@@ -75,6 +90,7 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:29",
       orderConfirmed: false,
+      cancelasked: false,
     },
     {
       id: 11,
@@ -82,75 +98,87 @@ export default function OrderedList() {
       orderedItems: "아메리카노(ICE)*5EA",
       orderedTime: "2021/10/23 22:49",
       orderConfirmed: false,
+      cancelasked: false,
     },
   ]);
-  const [confirmed, setConfirmed] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
 
-  const togglePopup = () => {
-    if (showPopup) {
-      setShowPopup(false);
-    } else {
-      setShowPopup(true);
-    }
+  const { orderedNo, orderedItems, orderedTime, orderConfirmed, cancelasked } =
+    inputs;
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
   };
+
+  const nextId = useRef(12);
 
   const okSubmit = (id) => {
-    setConfirmed(true);
-    //json에서 해당데이터 새로운 json으로 넘겨주고 삭제
+    setOrdered(
+      ordered.map((order) =>
+        order.id === id
+          ? { ...order, orderConfirmed: !order.orderConfirmed }
+          : order
+      )
+    );
   };
-  const noSubmit = () => {
-    setShowPopup(true);
+
+  const noSubmit = (id) => {
+    setOrdered(
+      ordered.map((order) =>
+        order.id === id ? { ...order, cancelasked: !order.cancelasked } : order
+      )
+    );
+  };
+
+  const asked = (id) => {
+    setOrdered(
+      ordered.map((order) =>
+        order.id === id ? { ...order, cancelasked: !order.cancelasked } : order
+      )
+    );
+  };
+
+  const onCreate = () => {
+    const order = {
+      id: nextId.current,
+      orderedNo,
+      orderedItems,
+      orderedTime,
+      orderConfirmed,
+      cancelasked,
+    };
+
+    setOrdered(ordered.concat(order));
+
+    setInputs({
+      orderedNo: "",
+      orderedItems: "",
+      orderedTime: "",
+      orderConfirmed: "",
+      cancelasked: "",
+    });
+
+    nextId.current += 1;
+  };
+
+  const byebye = (id) => {
+    setOrdered(ordered.filter((order) => order.id !== id));
   };
   return (
     <>
-      {ordered.map((ordered) => (
-        <>
-          {!ordered.orderConfirmed && (
-            <>
-              <List>
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderedNo}</Ordereddiv>
-                <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderedItems}
-                </Ordereddiv>
-                <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv>
-              </List>
-              <span>
-                <Okbutton onClick={okSubmit}>승낙하기</Okbutton>
-                <Nobutton onClick={noSubmit}>취소하기</Nobutton>
-              </span>
-              <div>&nbsp;</div>
-            </>
-          )}
-          {showPopup ? (
-            <ToggledBackgroundWrap>
-              <ToggleWrap>
-                <br />
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderedNo}</Ordereddiv>
-                <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderedItems}
-                </Ordereddiv>
-                <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv>
-                <br />
-                <br />
-                <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
-                <br />
-                <span>
-                  <ReadyButtonWrap
-                    onClick={() => {
-                      setOrdered(false);
-                    }}
-                  >
-                    Y
-                  </ReadyButtonWrap>
-                  <CancelButtonWrap onClick={togglePopup}>N</CancelButtonWrap>
-                </span>
-                <br />
-              </ToggleWrap>
-            </ToggledBackgroundWrap>
-          ) : null}
-        </>
-      ))}
+      <>
+        <OrderedListTemplate
+          ordered={ordered}
+          byebye={byebye}
+          okSubmit={okSubmit}
+          noSubmit={noSubmit}
+          asked={asked}
+        />
+      </>
     </>
   );
 }
@@ -216,7 +244,7 @@ const ToggleWrap = styled.div`
   justify-content: center;
   align-items: center;
 `;
-const CancelButtonWrap = styled.button`
+const NButtonWrap = styled.button`
   background-color: #202070;
   border: none;
   font-size: 15px;
@@ -227,7 +255,7 @@ const CancelButtonWrap = styled.button`
   opacity: 0.6;
 `;
 
-const ReadyButtonWrap = styled.button`
+const YButtonWrap = styled.button`
   background-color: black;
   border: none;
   font-size: 15px;
