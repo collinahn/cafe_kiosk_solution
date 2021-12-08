@@ -12,35 +12,41 @@ const OrderedListTable = ({ order, okSubmit, noSubmit, byebye }) => {
   } = order;
   return (
     <>
-      <List>
-        <Ordereddiv>&nbsp;주문 순서 : {orderedNo}</Ordereddiv>
-        <Ordereddiv>&nbsp;주문 내역 : {orderedItems}</Ordereddiv>
-        <Ordereddiv>&nbsp;주문 시간 : {orderedTime}</Ordereddiv>
-      </List>
-      <span>
-        <Okbutton onClick={() => okSubmit(id)}>승낙하기</Okbutton>
-        <Nobutton onClick={() => noSubmit(id)}>취소하기</Nobutton>
-        <div>&nbsp;</div>
-        {cancelasked === true ? (
-          <ToggledBackgroundWrap>
-            <ToggleWrap>
-              <br />
-              <Ordereddiv>&nbsp;주문 순서 : {order.orderedNo}</Ordereddiv>
-              <Ordereddiv>&nbsp;주문 내역 : {order.orderedItems}</Ordereddiv>
-              <Ordereddiv>&nbsp;주문 시간 : {order.orderedTime}</Ordereddiv>
-              <br />
-              <br />
-              <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
-              <br />
-              <span>
-                <YButtonWrap onClick={() => byebye(id)}>Y</YButtonWrap>
-                <NButtonWrap onClick={() => noSubmit(id)}>N</NButtonWrap>
-              </span>
-              <br />
-            </ToggleWrap>
-          </ToggledBackgroundWrap>
-        ) : null}
-      </span>
+      {!orderConfirmed ? (
+        <>
+          <List>
+            <Ordereddiv>&nbsp;주문 순서 : {orderedNo}</Ordereddiv>
+            <Ordereddiv>&nbsp;주문 내역 : {orderedItems}</Ordereddiv>
+            <Ordereddiv>&nbsp;주문 시간 : {orderedTime}</Ordereddiv>
+          </List>
+          <span>
+            <Okbutton onClick={() => okSubmit(id)}>승낙하기</Okbutton>
+            <Nobutton onClick={() => noSubmit(id)}>취소하기</Nobutton>
+            <div>&nbsp;</div>
+            {cancelasked === true ? (
+              <ToggledBackgroundWrap>
+                <ToggleWrap>
+                  <br />
+                  <Ordereddiv>&nbsp;주문 순서 : {order.orderedNo}</Ordereddiv>
+                  <Ordereddiv>
+                    &nbsp;주문 내역 : {order.orderedItems}
+                  </Ordereddiv>
+                  <Ordereddiv>&nbsp;주문 시간 : {order.orderedTime}</Ordereddiv>
+                  <br />
+                  <br />
+                  <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
+                  <br />
+                  <span>
+                    <YButtonWrap onClick={() => byebye(id)}>Y</YButtonWrap>
+                    <NButtonWrap onClick={() => noSubmit(id)}>N</NButtonWrap>
+                  </span>
+                  <br />
+                </ToggleWrap>
+              </ToggledBackgroundWrap>
+            ) : null}
+          </span>
+        </>
+      ) : null}
     </>
   );
 };
