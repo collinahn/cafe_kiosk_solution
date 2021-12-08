@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import  { useState } from "react";
+import Buttonx from "../../assets/image/Buttonx.svg";
 import "../../assets/css/CancelOrder.css";
 
 export default function CancelOrder() {
@@ -34,9 +35,15 @@ export default function CancelOrder() {
             
             <h2>결제가</h2>
             <h2>취소되었습니다.</h2>
-            <button className="close-modal" onClick={toggleModal}>
-              X
-            </button>
+            
+            <img className="close-modal" onClick={toggleModal}
+              style={{width: "25px", height: "25px"
+              }}
+              src={Buttonx}
+              id="Buttonx"
+              alt="Buttonx"
+            /> 
+            
           </div>
         </div>
       )}
