@@ -70,7 +70,9 @@ jwt = JWTManager(app)
 def index():
     return app.send_static_file("index.html")
 
-
+# enable CORS
+app.config['CORS_SUPPORTS_CREDENTIALS'] = True
+cors = CORS(app, origins=['*', '*'], allow_headers=['*', '*'], expose_headers=['content-type', '*'])
 
 if __name__ == '__main__':
 
