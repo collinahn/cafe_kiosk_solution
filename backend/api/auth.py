@@ -5,6 +5,7 @@
 
 from flask import request
 from flask.json import jsonify
+from flask.helpers import make_response
 from flask_restx import Api
 from flask_restx import fields
 from flask_restx import Namespace
@@ -40,17 +41,23 @@ class CAuth(Resource):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
             
         if any(c in dct_Input['id'] for c in const.SQL_INJECTION_FILTER): #추가 유효성 검사
-            return jsonify(const.SUCCESS_FALSE_RESPONSE)
+            log.INFO('aborting due to forbidden letters')
+            return make_response(jsonify(const.SUCCESS_FALSE_RESPONSE), 400)
 
         # 인증 성공!
         if cls_DB.verify_user(dct_Input['actor'], dct_Input['id'], dct_Input['pw']):
+            # 인증 시각 기록
+            cls_DB.update_last_access( dct_Input['id'], bIsAdmin=(dct_Input['actor']=='admin') )
+            log.INFO('login success')
+
             return jsonify({
                 'success':True,
                 'jwt_token':create_access_token(identity=dct_Input['id'], expires_delta=False)
             })
 
+        log.INFO('login fail')
 
-        return jsonify(const.SUCCESS_FALSE_RESPONSE)
+        return make_response(jsonify(const.SUCCESS_FALSE_RESPONSE), 400)
 
 
 # thunder-client로 확인 완료
