@@ -2,7 +2,7 @@
 # 시스템 설계 명세서 6. Data설계를 기반으로 작성됨.
 # https://docs.google.com/document/d/1UsmxXIQL2K8jQTq3UMREj8FjEy_7PnZRa_Z8_B98dNE/edit?usp=sharing
 
-# 2021.11.20 created by 이혜원
+# 2021.11.20 created by 이혜원 - SQL문 작성
 # 2021.11.27 modified by 안태영: 
 #                        1) 객체 생성 시 실제 파일이 있는 지 체크, 생성자에서 테이블 생성하도록 수정
 #                        2) 공통적으로 사용하는 staticmethod 추가(시간 관련)
@@ -10,7 +10,9 @@
 #                        1) db트랜젝션을 제어하기 위한 대부분의 함수 완성
 #                        2) TODO: 각 서브시스템별로 파일 분리하기
 #
-# TODO: order.py에 add_customer_info() 함수 반영한다
+# 2021.12.08 modified by 안태영:
+#                        1) order.py에 add_customer_info() 함수 반영한다
+#                        2) add_customer_info() 전에 OrderManager 속성을 참조해 새로운 테이블을 생성해야하는지 확인한다.
 
 import os
 import sqlite3
@@ -195,7 +197,7 @@ class GetPutFmDB(object):
     # 주문의 상태가 변경되면 시각과 처리 결과를 기록한다.
     # 처리 결과(status)
     # on: 기본(주문이 들어온 상태)
-    # cancelled: 취소됨
+    # cancelled: 취소됨 cancelled by customer/staff(들어오는 값에 따라 다름)
     # completed: 완료됨
     def add_result_tHistOrder(self, nOrderNo: int, sStatus: str):
         conn: Connection = None
