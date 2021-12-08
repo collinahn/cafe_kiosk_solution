@@ -4,7 +4,6 @@
 
 from flask import request
 from flask.json import jsonify
-from flask_restx import Api
 from flask_restx import fields
 from flask_restx import Namespace
 from flask_restx import Resource
@@ -21,7 +20,7 @@ log = Logger()
 Order = Namespace('Order')
 cls_Om = OrderManager()
 cls_Q = LinkedQueue()
-db = GetPutFmDB()
+cls_Db = GetPutFmDB()
 
 post_order_body = Order.model('Resource-Order', {
     'order':fields.Raw({
@@ -30,7 +29,9 @@ post_order_body = Order.model('Resource-Order', {
         })
     })
 
-cancel_order_body = Order.model('Resource-Cancel',{'isCancel':fields.Boolean(True)})
+cancel_order_body = Order.model('Resource-Cancel',{
+    'isCancel':fields.Boolean(True)
+    })
 
 @Order.route('/')
 class COrder(Resource):
@@ -41,16 +42,18 @@ class COrder(Resource):
         dct_Input: dict = request.get_json()
 
         # 올바르지 않은 요청일 때 필터링
-        try:
-            if not dct_Input['order']:
-                return jsonify(const.SUCCESS_FALSE_RESPONSE)
-        except KeyError as e:
-            log.ERROR('key error no key named', e, 'instead received', dct_Input.keys())
+        if not utils.check_params(dct_Input, post_order_body.keys()):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
-
+        
         # 주문을 분해해서 Items4Order객체로 만든 뒤, 그 다음에 주문을 푸시한다
-        tpl_Order: tuple = (Items4Order(key, value) for key, value in dct_Input['order'].items() )
+        tpl_Order: tuple = tuple( Items4Order(key, value) for key, value in dct_Input['order'].items() )
         s_OrderNo: str = cls_Om.push_order(tpl_Order)
+
+        # 주문자 정보를 입력한다.
+        if cls_Om.init_required:
+            cls_Db.create_tCustomer()
+        s_IpAddr: str = request.environ['REMOTE_ADDR'] if request.environ.get('HTTP_X_FORWARDED_FOR') is None else request.environ['HTTP_X_HTTP_X_FORWARDED_FOR']
+        cls_Db.add_customer_info(s_OrderNo, sIPAdress=s_IpAddr)
 
         return jsonify({
             'success':True,
@@ -64,7 +67,7 @@ class COrderCode(Resource):
     def get(self,orderCode):
         return jsonify({
             'success':True,
-            'isComplete':cls_Om.check_complete(int(orderCode))
+            'isComplete':not cls_Om.check_complete(int(orderCode))
         })
     
     @Order.doc(cnl_body=cancel_order_body)
@@ -80,7 +83,7 @@ class COrderCode(Resource):
         
         if b_CnlRequest:
             return jsonify({
-                'isCancellable':cls_Q._check_cancellable(int(orderCode)),
+                'isCancellable':cls_Q.check_cancellable(int(orderCode)),
                 'isCancelled':cls_Om.cancel_order_guest(int(orderCode))
                 })
 

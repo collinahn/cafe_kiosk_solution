@@ -263,7 +263,7 @@ class GetPutFmDB(object):
                 conn.close()
 
     # 주문 시 주문자 정보를 기록한다
-    def add_customer_info(self, nOrderNo: int, sMacAddress: str, sIPAdress: str):
+    def add_customer_info(self, nOrderNo: int, sIPAdress: str, sMacAddress: str='00:00:00:00:00:00'):
         conn: Connection = None
         s_TblName = self.get_table_name_tody(sType='Customer')
 

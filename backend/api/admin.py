@@ -45,7 +45,7 @@ class CAdmin(Resource):
     def post(self):
         dct_Input: dict = request.get_json()
 
-        if utils.check_false_param(dct_Input, post_admin_body.keys(), sExcept='init'):
+        if not utils.check_params(dct_Input, post_admin_body.keys(), sExcept='init'):
             return make_response(jsonify(const.SUCCESS_FALSE_RESPONSE), 412) # insufficient body
 
         if not cls_DB.add_items((
@@ -59,7 +59,7 @@ class CAdmin(Resource):
         )):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
 
-        if not utils.check_false_param(dct_Input, ('init',)) and dct_Input['init']:
+        if not utils.check_params(dct_Input, ('init',)) and dct_Input['init']:
             cls_If.lazy_init()
             cls_If.lazy_init_item_list() # 즉시 초기화
 

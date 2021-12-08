@@ -46,6 +46,10 @@ class OrderManager(object):
     def queue(self) -> LinkedQueue:
         return self.iq_Queue
 
+    @property
+    def init_required(self) -> bool:
+        return self.__in_OrderCount == 1
+
     # 주문서 생성한다
     # { 주문서번호:SingleOrder인스턴스 }를 반환함.
     # SingleOrder인스턴스는 주문 및 상품의 정보를 모두 갖고 있음.
@@ -73,7 +77,7 @@ class OrderManager(object):
         so_Order: SingleOrder = next(iter(dct_ToPush.values()))
 
         #DB 반영
-        if n_OrderCnt == 1:
+        if self.init_required:
             self.cls_DB.create_tHistOrder()
         self.cls_DB.add_tHistOrder(n_OrderCnt, so_Order.details, so_Order.time)
 
