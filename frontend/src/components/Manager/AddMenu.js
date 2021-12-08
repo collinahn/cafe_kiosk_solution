@@ -24,8 +24,17 @@ export default function AddMenu() {
     if (pwd === password) {
       axios
         .post(
-          "start/v1",
-          { itemname, itemCode, itemPrice, itemClass, finishTime },
+          "/admin/",
+          {
+            code: itemCode,
+            name: itemname,
+            category: itemClass,
+            price: itemPrice,
+            time: finishTime,
+            avail: true,
+            url: thumbnail,
+            init: true,
+          },
           { withCredentials: true }
         )
         .then((response) => {
@@ -250,29 +259,29 @@ const ToggleWrap = styled.div`
   z-index: 1;
 `;
 
-const AddMenuWrap = styled.div`
-  padding-top: 15px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  border: 2px solid black;
-  border-top: none;
-  border-bottom: none;
-`;
+// const AddMenuWrap = styled.div`
+//   padding-top: 15px;
+//   display: flex;
+//   flex-wrap: wrap;
+//   justify-content: center;
+//   border: 2px solid black;
+//   border-top: none;
+//   border-bottom: none;
+// `;
 
-const EmptyMenuWrap = styled.div`
-  width: 86px;
-  height: 81px;
-  background-color: #f6f6ff;
-  border: 1px solid #493e3e;
-  box-shadow: inset 0px 3px 3px #aaa;
-  border-radius: 10px;
-  text-align: center;
-  margin: 0 3px 15px 3px;
-`;
+// const EmptyMenuWrap = styled.div`
+//   width: 86px;
+//   height: 81px;
+//   background-color: #f6f6ff;
+//   border: 1px solid #493e3e;
+//   box-shadow: inset 0px 3px 3px #aaa;
+//   border-radius: 10px;
+//   text-align: center;
+//   margin: 0 3px 15px 3px;
+// `;
 
-const EmptyMenuItemNameWrap = styled.p`
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 27px;
-`;
+// const EmptyMenuItemNameWrap = styled.p`
+//   font-weight: bold;
+//   font-size: 24px;
+//   margin-top: 27px;
+// `;
