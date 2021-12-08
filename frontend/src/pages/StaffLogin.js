@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Logo from "../assets/image/Logo.svg";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import axios from "axios";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://127.0.0.1:5000";
-export default function StaffLogin(props) {
+export default function Login({ props, name }) {
+  const history = useHistory();
   const [Id, setId] = useState("");
   const [Password, setPassword] = useState("");
 
@@ -25,8 +26,7 @@ export default function StaffLogin(props) {
           console.log("res.data.accessToken : " + res.data);
           console.log(res.data);
           axios.defaults.headers.common["Authorization"] = "Bearer " + res.data;
-          props.loginCallBack(true);
-          props.history.push("/manager");
+          history.push("/staff");
         })
         .catch((ex) => {
           console.log("login request fail: " + ex);
@@ -61,7 +61,7 @@ export default function StaffLogin(props) {
         <NameWrap>
           ABC COFFEE-
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;staff
+          &nbsp;&nbsp;&nbsp;&nbsp;manager
         </NameWrap>
       </TitleWrap>
       <LoginWrap>

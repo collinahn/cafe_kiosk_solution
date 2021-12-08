@@ -1,6 +1,6 @@
 import React from "react";
 import Header from "../components/common/Header";
-import OrderedList from "../components/Ordered/OrderedList";
+import OrderedList from "../components/Staff/OrderedList";
 import styled from "styled-components";
 
 export default function Staff() {
