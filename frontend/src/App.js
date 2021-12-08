@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Route } from "react-router-dom";
-import axios from "axios";
 import Manager from "../src/pages/Manager";
 import Main from "../src/pages/Main";
 import Start from "./pages/Start";
 import LoginPage from "./pages/Login";
 import Complete from "./pages/Complete";
 import Order from "./pages/Order";
+import Ordered from "./pages/Ordered";
+import Ready from "./pages/Ready";
 import AuthRoute from "./components/Auth/AuthRoute";
 import StaffLogin from "./pages/StaffLogin";
 
@@ -32,6 +33,8 @@ export default function App() {
       <Route path="/complete" component={Complete} />
       <Route path="/order" component={Order} />
       <Route path="/StaffLogin" component={StaffLogin} />
+      <Route path="/Ordered" component={Ordered} />
+      <Route path="/Ready" component={Ready} />
     </div>
   );
 }
