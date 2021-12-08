@@ -36,7 +36,7 @@ class Items(object):
             if sItemCode:
                 cls.logger.CRITICAL("Wrong Class Call", sItemCode)
 
-        cls.logger.INFO(cls._instance)
+        cls.logger.INFO(sItemCode or tplItemInfo[0], cls._instance)
         return cls._instance
 
     def __init__(self, tpleItemInfo: tuple[str,str,str,int,int,int,str], *args, bTraceCategory: bool=True) -> None:
