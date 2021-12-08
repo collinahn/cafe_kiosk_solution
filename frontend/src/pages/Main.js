@@ -4,13 +4,11 @@ import MenuList from "../components/common/MenuList";
 import "../assets/css/Manager.css";
 import "../assets/css/Main.css";
 
-const Main = () => {
+export default function Main() {
   return (
     <>
       <Header />
       <MenuList />
     </>
   );
-};
-
-export default Main;
+}

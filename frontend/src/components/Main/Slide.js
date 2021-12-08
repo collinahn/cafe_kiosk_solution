@@ -6,7 +6,6 @@ import "slick-carousel/slick/slick-theme.css";
 
 export default function SimpleSlider({ menuArray }) {
   const settings = {
-    dots: true,
     infinite: false,
     slidesToShow: 3,
     slidesToScroll: 3,
