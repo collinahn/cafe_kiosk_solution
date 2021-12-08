@@ -7,77 +7,77 @@ const ReadyArray = [
     readyNo: "001",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 21:29",
-    sent: false,
+    readysent: false,
   },
   {
     id: 2,
     readyNo: "002",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 21:31",
-    sent: false,
+    readysent: false,
   },
   {
     id: 3,
     readyNo: "003",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 21:32",
-    sent: false,
+    readysent: false,
   },
   {
     id: 4,
     readyNo: "004",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 21:33",
-    sent: false,
+    readysent: false,
   },
   {
     id: 5,
     readyNo: "005",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:00",
-    sent: false,
+    readysent: false,
   },
   {
     id: 6,
     readyNo: "006",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:09",
-    sent: false,
+    readysent: false,
   },
   {
     id: 7,
     readyNo: "007",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:14",
-    sent: false,
+    readysent: false,
   },
   {
     id: 8,
     readyNo: "008",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:19",
-    sent: false,
+    readysent: false,
   },
   {
     id: 9,
     readyNo: "009",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:25",
-    sent: false,
+    readysent: false,
   },
   {
     id: 10,
     readyNo: "010",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:29",
-    sent: false,
+    readysent: false,
   },
   {
     id: 11,
     readyNo: "011",
     readyItems: "아메리카노(ICE)*5EA",
     readyTime: "2021/10/23 22:49",
-    sent: false,
+    readysent: false,
   },
 ];
 
@@ -86,7 +86,6 @@ export default function ReadyList() {
   const sentReady = () => {
     setSent(true);
   };
-
   return (
     <>
       {ReadyArray.map((ready) => (
@@ -97,10 +96,17 @@ export default function ReadyList() {
             <Ordereddiv>&nbsp;주문 시간 : {ready.readyTime}</Ordereddiv>
           </List>
           <>
-            {ready.sent ? (
-              <Unactivebtn>알림 보내기 완료</Unactivebtn>
+            {!ready.readysent ? (
+              <Activebtn
+                onClick={() => {
+                  setSent(true);
+                  ready.readysent = sent;
+                }}
+              >
+                준비 완료 알림 보내기
+              </Activebtn>
             ) : (
-              <Activebtn onClick={sentReady}>준비 완료 알림 보내기</Activebtn>
+              <Unactivebtn>알림 보내기 완료</Unactivebtn>
             )}
           </>
           <div>&nbsp;</div>
@@ -115,7 +121,7 @@ const List = styled.div`
   height: 80px;
   display: flex;
   justify-content: center;
-  background-color: lightgray;
+  background-color: Gainsboro;
   flex-direction: column;
 `;
 

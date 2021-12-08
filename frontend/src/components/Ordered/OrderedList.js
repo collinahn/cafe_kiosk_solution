@@ -1,87 +1,89 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-
-const OrderedArray = [
-  {
-    id: 1,
-    orderedNo: "001",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 21:29",
-    orderConfirmed: false,
-  },
-  {
-    id: 2,
-    orderedNo: "002",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 21:31",
-    orderConfirmed: false,
-  },
-  {
-    id: 3,
-    orderedNo: "003",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 21:32",
-    orderConfirmed: false,
-  },
-  {
-    id: 4,
-    orderedNo: "004",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 21:33",
-    orderConfirmed: false,
-  },
-  {
-    id: 5,
-    orderedNo: "005",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:00",
-    orderConfirmed: false,
-  },
-  {
-    id: 6,
-    orderedNo: "006",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:09",
-    orderConfirmed: false,
-  },
-  {
-    id: 7,
-    orderedNo: "007",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:14",
-    orderConfirmed: false,
-  },
-  {
-    id: 8,
-    orderedNo: "008",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:19",
-    orderConfirmed: false,
-  },
-  {
-    id: 9,
-    orderedNo: "009",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:25",
-    orderConfirmed: false,
-  },
-  {
-    id: 10,
-    orderedNo: "010",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:29",
-    orderConfirmed: false,
-  },
-  {
-    id: 11,
-    orderedNo: "011",
-    orderedItems: "아메리카노(ICE)*5EA",
-    orderedTime: "2021/10/23 22:49",
-    orderConfirmed: false,
-  },
-];
+import axios from "axios";
 
 export default function OrderedList() {
+  const [data, setData] = useState(null);
+
+  const [ordered, setOrdered] = useState([
+    {
+      id: 1,
+      orderedNo: "001",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 21:29",
+      orderConfirmed: false,
+    },
+    {
+      id: 2,
+      orderedNo: "002",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 21:31",
+      orderConfirmed: false,
+    },
+    {
+      id: 3,
+      orderedNo: "003",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 21:32",
+      orderConfirmed: true,
+    },
+    {
+      id: 4,
+      orderedNo: "004",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 21:33",
+      orderConfirmed: false,
+    },
+    {
+      id: 5,
+      orderedNo: "005",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:00",
+      orderConfirmed: false,
+    },
+    {
+      id: 6,
+      orderedNo: "006",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:09",
+      orderConfirmed: false,
+    },
+    {
+      id: 7,
+      orderedNo: "007",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:14",
+      orderConfirmed: false,
+    },
+    {
+      id: 8,
+      orderedNo: "008",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:19",
+      orderConfirmed: false,
+    },
+    {
+      id: 9,
+      orderedNo: "009",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:25",
+      orderConfirmed: false,
+    },
+    {
+      id: 10,
+      orderedNo: "010",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:29",
+      orderConfirmed: false,
+    },
+    {
+      id: 11,
+      orderedNo: "011",
+      orderedItems: "아메리카노(ICE)*5EA",
+      orderedTime: "2021/10/23 22:49",
+      orderConfirmed: false,
+    },
+  ]);
   const [confirmed, setConfirmed] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -102,7 +104,7 @@ export default function OrderedList() {
   };
   return (
     <>
-      {OrderedArray.map((ordered) => (
+      {ordered.map((ordered) => (
         <>
           {!ordered.orderConfirmed && (
             <>
@@ -134,7 +136,11 @@ export default function OrderedList() {
                 <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
                 <br />
                 <span>
-                  <ReadyButtonWrap /*onClick ={배열에서삭제}*/>
+                  <ReadyButtonWrap
+                    onClick={() => {
+                      setOrdered(false);
+                    }}
+                  >
                     Y
                   </ReadyButtonWrap>
                   <CancelButtonWrap onClick={togglePopup}>N</CancelButtonWrap>
@@ -154,7 +160,7 @@ const List = styled.div`
   height: 80px;
   display: flex;
   justify-content: center;
-  background-color: lightgray;
+  background-color: Gainsboro;
   flex-direction: column;
 `;
 
@@ -193,7 +199,7 @@ const Nobutton = styled.button`
 
 const ToggledBackgroundWrap = styled.div`
   bottom: 60px;
-  position: absolute;
+  position: fixed;
   left: 44px;
   display: flex;
   justify-content: center;
