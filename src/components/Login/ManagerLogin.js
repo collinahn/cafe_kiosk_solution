@@ -66,6 +66,10 @@ const Input = styled.input`
   width: 183px;
   height: 32px;
   margin-bottom: 5px;
+  text-align: center;
+  font-size: 20px;
+  font-family: Georgia;
+  font-style: oblique;
   background-color: white;
   border-top: none;
   border-left: none;
