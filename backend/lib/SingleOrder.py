@@ -53,7 +53,7 @@ class SingleOrder(object):
         dct_Ret: dict = {}
         if self.tpl_OrderList:
             for target in self.tpl_OrderList:
-                dct_Ret[target.item.code]=target.quantity
+                dct_Ret[target.item.name]=target.quantity
         return dct_Ret # DB 및 json { "item01":1, "item02":3, ... }
 
     @property
