@@ -14,26 +14,35 @@ export default function AddMenu() {
   const [itemPrice, onChangeItemPrice] = useInput("");
   const [itemClass, onChangeItemClass] = useInput("");
   const [finishTime, onChangeFinishTime] = useInput("");
-  const [thumbnail, onChangeThumbnail] = useInput("");
+  const [thumbnail, setThumbnail] = useState(null);
   const [password, onChangePassword] = useInput("");
+
+  const onChangeThumbnail = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setThumbnail('"./' + e.target.files[0].name + '"');
+    }
+  };
 
   const onSubmitForm = async (e) => {
     setDisabled(true);
     e.preventDefault();
+    console.log(thumbnail);
     await new Promise((r) => setTimeout(r, 1000));
     if (pwd === password) {
       axios
         .post(
           "/admin/",
           {
-            code: itemCode,
-            name: itemname,
-            category: itemClass,
-            price: itemPrice,
-            time: finishTime,
-            avail: true,
-            url: thumbnail,
-            init: true,
+            data: {
+              code: itemCode,
+              name: itemname,
+              category: itemClass,
+              price: itemPrice,
+              time: finishTime,
+              avail: true,
+              url: thumbnail,
+              init: true,
+            },
           },
           { withCredentials: true }
         )
@@ -46,7 +55,6 @@ export default function AddMenu() {
           alert("Error!");
           console.error(err);
         });
-      alert("등록되었습니다");
       setDisabled(false);
       setShowPopupMenu(false);
     } else {
@@ -96,13 +104,13 @@ export default function AddMenu() {
                 placeholder="예상완료 시간(분)"
               />
               <br />
-              <LabelForInput htmlFor="thumbnails">사진 업로드</LabelForInput>
+              {/* <LabelForInput htmlFor="thumbnails">사진 업로드</LabelForInput> */}
               <br />
               <input
                 type="file"
                 name="thumbnail"
                 id="thumbnails"
-                style={{ display: "none" }}
+                // style={{ display: "none" }}
                 onChange={onChangeThumbnail}
               />
               <Input

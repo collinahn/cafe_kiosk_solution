@@ -7,9 +7,10 @@ axios.defaults.baseURL = "http://127.0.0.1:5000";
 
 export default function OrderedList() {
   const [OrderedArray, setOrderedArray] = useState([]);
-  const [details, setDetails] = useState([]);
+
   useEffect(() => {
-    axios.get("/staff").then((res) => {
+    axios.get("/staff/").then((res) => {
+      console.log(res);
       setOrderedArray(res.data.queue);
       console.log(res.data.queue);
       console.log("성공");
@@ -36,9 +37,16 @@ export default function OrderedList() {
           {!ordered.orderConfirmed && (
             <>
               <List>
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderCode}</Ordereddiv>
+                <Ordereddiv>&nbsp;주문 순서: {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderDetails}
+                  &nbsp;주문 내역
+                  <br />
+                  {Object.entries(ordered.orderDetails).map(([key, value]) => (
+                    <DictDiv>
+                      <div>{key}</div>
+                      <ValueDiv>{value}EA</ValueDiv>
+                    </DictDiv>
+                  ))}
                 </Ordereddiv>
                 {/* <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv> */}
               </List>
@@ -53,9 +61,14 @@ export default function OrderedList() {
             <ToggledBackgroundWrap>
               <ToggleWrap>
                 <br />
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderedNo}</Ordereddiv>
+                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderedItems}
+                  &nbsp;주문 내역 :{" "}
+                  {Object.entries(ordered.orderDetails).map(([key, value]) => (
+                    <span>
+                      {key} * {value}EA,{"   "}
+                    </span>
+                  ))}
                 </Ordereddiv>
                 <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv>
                 <br />
@@ -78,13 +91,18 @@ export default function OrderedList() {
   );
 }
 
-const List = styled.div`
-  width: 393px;
-  height: 80px;
+const ValueDiv = styled.div`
+  padding-left: 10px;
+`;
+
+const DictDiv = styled.div`
+  padding: 0 6px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+`;
+
+const List = styled.div`
   background-color: lightgray;
-  flex-direction: column;
 `;
 
 const Ordereddiv = styled.div`
