@@ -1,200 +1,102 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Americano from "../../assets/image/Americano.svg";
-import AppleAde from "../../assets/image/AppleAde.svg";
-import GreenAppleAde from "../../assets/image/GreenAppleAde.svg";
-import Dacquoise from "../../assets/image/Dacquoise.svg";
-import ButterDacquoise from "../../assets/image/ButterDacquoise.svg";
-import ChocoDacquoise from "../../assets/image/ChocoDacquoise.svg";
-import CreamDacquoise from "../../assets/image/CreamDacquoise.svg";
-import PinkSaltDacquoise from "../../assets/image/PinkSaltDacquoise.svg";
-import StrawberryDacquoise from "../../assets/image/StrawberryDacquoise.svg";
-import TiramisuDacquoise from "../../assets/image/TiramisuDacquoise.svg";
+import { Link } from "react-router-dom";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Slide from "../Main/Slide";
 import styled from "styled-components";
 import axios from "axios";
 
-const TitleArray = ["커피", "디저트", "베이커리", "에이드"];
-
-const menuArray = [
-  {
-    id: 1,
-    itemClass: "커피",
-    itemCode: "item001",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 2,
-    itemClass: "커피",
-    itemCode: "item002",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 3,
-    itemClass: "에이드",
-    itemCode: "item003",
-    itemName: "사과에이드",
-    itemPrice: "5,200원",
-    thumbnail: AppleAde,
-  },
-  {
-    id: 4,
-    itemClass: "커피",
-    itemCode: "item004",
-    itemName: "아메리카노(ICE)",
-    itemPrice: "4,100원",
-    thumbnail: Americano,
-  },
-  {
-    id: 5,
-    itemClass: "디저트",
-    itemCode: "item005",
-    itemName: "다쿠아즈",
-    itemPrice: "2,500원",
-    thumbnail: Dacquoise,
-  },
-  {
-    id: 6,
-    itemClass: "디저트",
-    itemCode: "item006",
-    itemName: "마카롱",
-    itemPrice: "2,500원",
-    thumbnail: Americano,
-  },
-  {
-    id: 7,
-    itemClass: "에이드",
-    itemCode: "item007",
-    itemName: "그린애플에이드(ICE)",
-    itemPrice: "5,200원",
-    thumbnail: GreenAppleAde,
-  },
-  {
-    id: 8,
-    itemClass: "베이커리",
-    itemCode: "item008",
-    itemName: "크림빵",
-    itemPrice: "1,800원",
-    thumbnail: Americano,
-  },
-  {
-    id: 9,
-    itemClass: "베이커리",
-    itemCode: "item009",
-    itemName: "앙버터다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: ButterDacquoise,
-  },
-  {
-    id: 10,
-    itemClass: "베이커리",
-    itemCode: "item010",
-    itemName: "초코가나슈다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: ChocoDacquoise,
-  },
-  {
-    id: 11,
-    itemClass: "베이커리",
-    itemCode: "item011",
-    itemName: "크림브륄레다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: CreamDacquoise,
-  },
-  {
-    id: 12,
-    itemClass: "베이커리",
-    itemCode: "item012",
-    itemName: "핑크솔트다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: PinkSaltDacquoise,
-  },
-  {
-    id: 13,
-    itemClass: "베이커리",
-    itemCode: "item013",
-    itemName: "산딸기앙글레이즈다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: StrawberryDacquoise,
-  },
-  {
-    id: 14,
-    itemClass: "베이커리",
-    itemCode: "item014",
-    itemName: "티라미수더블다쿠아즈",
-    itemPrice: "2,800원",
-    thumbnail: TiramisuDacquoise,
-  },
-];
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://127.0.0.1:5000";
 
 export default function MenuList() {
-  const [menu, setMenu] = useState(TitleArray[0]);
-  const CoffeeList = menuArray.filter((data) => {
-    return data.itemClass === "커피";
-  });
-
-  const DeesertList = menuArray.filter((data) => {
-    return data.itemClass === "디저트";
-  });
-
-  const BakeryList = menuArray.filter((data) => {
-    return data.itemClass === "베이커리";
-  });
-
-  const AdeList = menuArray.filter((data) => {
-    return data.itemClass === "에이드";
-  });
-
-  let [targetArray, setTargetArray] = useState(CoffeeList);
-
-  const [APImenu, setAPIMenu] = useState([]);
-
+  const [classification, setClassification] = useState([]);
+  const [APImenu, setAPImenu] = useState([]);
   // API에서 값 받아오기
   useEffect(() => {
     axios
       .get("/start/v1")
       .then((res) => {
-        setAPIMenu(res.data);
+        setAPImenu(res.data.data);
+        setClassification(res.data.classification);
         console.log("불러오기 성공");
+        console.log(res.data);
         console.log(APImenu);
       })
       .catch((err) => console.error(err))
       .finally(console.log(APImenu));
   }, []);
 
-  // const [cart, setCart] = useState({
-  //   name: "",
-  //   price: "",
-  // });
-  // const { name, price } = cart;
-  // const onAddCart = (e) => {
-  //   console.log("ddd");
-  //   const { name, price } = e.target;
-  //   setCart({
-  //     ...cart,
-  //   });
-  // };
+  const [cart, setCart] = useState([]);
+  const onAddCart = useCallback(({ itemCode, itemName, itemPrice }) => {
+    setCart((orders) => {
+      const find = orders.find((one) => one.itemCode === itemCode);
+      if (find === undefined) {
+        return [
+          ...orders,
+          {
+            itemCode: itemCode,
+            itemName: itemName,
+            itemPrice: itemPrice,
+            quantity: 1,
+          },
+        ];
+      } else {
+        return orders.map((one) =>
+          one.itemCode === itemCode
+            ? {
+                itemCode: itemCode,
+                itemName: itemName,
+                quantity: one.quantity + 1,
+                itemPrice: one.itemPrice + itemPrice,
+              }
+            : one
+        );
+      }
+    });
+  }, []);
+
+  let sum = 0;
+  for (let i = 0; i < cart.length; i++) {
+    sum = sum + cart[i].itemPrice;
+  }
+
+  const BrunchList = APImenu.filter((data) => {
+    return data.itemClass === "브런치";
+  });
+
+  const DeesertList = APImenu.filter((data) => {
+    return data.itemClass === "디저트";
+  });
+
+  const CoffeeList = APImenu.filter((data) => {
+    return data.itemClass === "커피";
+  });
+
+  const DrinkList = APImenu.filter((data) => {
+    return data.itemClass === "음료";
+  });
+
+  let [targetArray, setTargetArray] = useState(BrunchList);
 
   const handleButtonClick = (e) => {
-    setMenu(e.target.value);
     console.log(e.target.value);
-    if (e.target.value === "커피") {
-      setTargetArray(CoffeeList);
-    } else if (e.target.value === "에이드") {
-      setTargetArray(AdeList);
+    if (e.target.value === "브런치") {
+      setTargetArray(BrunchList);
     } else if (e.target.value === "디저트") {
       setTargetArray(DeesertList);
-    } else if (e.target.value === "베이커리") {
-      setTargetArray(BakeryList);
+    } else if (e.target.value === "커피") {
+      setTargetArray(CoffeeList);
+    } else if (e.target.value === "음료") {
+      setTargetArray(DrinkList);
     }
   };
 
   return (
     <>
       <TitleWrap>
-        {TitleArray.map((menu, idx) => {
+        {classification.map((menu, idx) => {
           return (
             <MenuBtnLabel id="menu" key={idx}>
               <InputWrap
@@ -202,7 +104,6 @@ export default function MenuList() {
                 name="menu"
                 value={menu}
                 id="menu"
-                defaultChecked={menu === "커피"}
                 onChange={handleButtonClick}
               ></InputWrap>
               <ButtonWrap>{menu}</ButtonWrap>
@@ -211,26 +112,113 @@ export default function MenuList() {
         })}
       </TitleWrap>
       <MenuListWrap>
-        {targetArray.map((menu) => (
-          <>
-            <MenuWrap /*onClick={onAddCart}*/ key={menu.id} id={menu.id}>
-              <img
-                style={{ width: "43px", height: "61px" }}
-                src={menu.thumbnail}
-                alt={menu.itemName}
-              />
-              <MenuNameWrap>{menu.itemName}</MenuNameWrap>
-              <MenuNameWrap>{menu.itemPrice}</MenuNameWrap>
-            </MenuWrap>
-          </>
-        ))}
+        {/* avail, itemClass, itemCode, itemName, itemPrice, thumbnail */}
+        {targetArray.map((menu) => {
+          const { thumbnail, itemName, itemPrice, itemCode, itemClass } = menu;
+          const onAdd = () => {
+            onAddCart({ itemCode, itemName, itemPrice });
+          };
+          return (
+            <>
+              <MenuWrap onClick={onAdd} key={menu.id} id={menu.id}>
+                <img
+                  style={{ width: "43px", height: "61px" }}
+                  src={Americano}
+                  alt={itemName}
+                />
+                <MenuNameWrap>{itemName}</MenuNameWrap>
+                <MenuNameWrap>{itemPrice}</MenuNameWrap>
+                <RestWrap>{itemCode}</RestWrap>
+                <RestWrap>{itemClass}</RestWrap>
+              </MenuWrap>
+            </>
+          );
+        })}
       </MenuListWrap>
+      <CartWrap>
+        <CartTitleWrap>
+          <TextWrap>장바구니</TextWrap>
+          <PriceWrap>총 주문금액 ₩{sum}</PriceWrap>
+        </CartTitleWrap>
+        <Slide menuArray={cart} />
+      </CartWrap>
+      <BottomButtonWrap>
+        <LinkWrap to="/">
+          <CloseButtonWrap>취소하기</CloseButtonWrap>
+        </LinkWrap>
+        <LinkWrap
+          to={{
+            pathname: "/order",
+            props: cart,
+          }}
+        >
+          <PayButtonWrap>결제하기</PayButtonWrap>
+        </LinkWrap>
+      </BottomButtonWrap>
     </>
   );
 }
 
+const CartWrap = styled.div`
+  border-top: 2px solid black;
+  background-color: #f6f6ff;
+`;
+const RestWrap = styled.div`
+  display: none;
+`;
+const CartTitleWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  color: #493e3e;
+  font-size: 16px;
+  font-weight: 500;
+`;
+
+const LinkWrap = styled(Link)`
+  width: 100%;
+  text-decoration: none;
+`;
+
+const BottomButtonWrap = styled.div`
+  border-top: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-weight: bold;
+`;
+
+const CloseButtonWrap = styled.div`
+  background-color: black;
+  color: white;
+  padding: 5px 0;
+  border: 2px solid black;
+`;
+
+const PayButtonWrap = styled.div`
+  color: #493e3e;
+  padding: 5px 0;
+`;
+
+const TextWrap = styled.p`
+  margin: 15px 0 5px 50px;
+  font-weight: bold;
+  font-size: 16px;
+  margin-left: 50px;
+`;
+const PriceWrap = styled.p`
+  margin: 15px 50px 5px 0;
+  font-weight: bold;
+  font-size: 16px;
+`;
+
 const MenuListWrap = styled.div`
   height: 322px;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   padding-top: 15px;
   display: flex;
   flex-wrap: wrap;
@@ -248,23 +236,6 @@ const MenuNameWrap = styled.p`
   text-align: center;
   font-size: 11px;
   margin: 0;
-`;
-
-const EmptyMenuWrap = styled.div`
-  width: 86px;
-  height: 81px;
-  background-color: #f6f6ff;
-  border: 1px solid #493e3e;
-  box-shadow: inset 0px 3px 3px #aaa;
-  border-radius: 10px;
-  text-align: center;
-  margin: 0 3px;
-`;
-
-const EmptyMenuNameWrap = styled.p`
-  font-weight: bold;
-  font-size: 24px;
-  margin-top: 27px;
 `;
 
 const TitleWrap = styled.div`
