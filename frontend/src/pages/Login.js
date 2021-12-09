@@ -22,10 +22,10 @@ export default function Login({ props, name }) {
           },
         })
         .then((res) => {
-          console.log(JSON.stringify(res));
-          console.log("res.data.accessToken : " + res.data);
+          console.log("res.data.accessToken : " + res.data.jwt_token);
           console.log(res.data);
-          axios.defaults.headers.common["Authorization"] = "Bearer " + res.data;
+          axios.defaults.headers.common["Authorization"] =
+            "Bearer " + res.data.jwt_token;
           history.push("/manager");
         })
         .catch((ex) => {

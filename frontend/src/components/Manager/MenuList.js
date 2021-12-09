@@ -16,7 +16,8 @@ export default function MenuList() {
       .then((res) => {
         setAPImenu(res.data.data);
         setClassification(res.data.classification);
-        console.log("불러오기 성공");
+        console.log("불러오기 성공!!!!!!!!!!!");
+        console.log(APImenu);
       })
       .catch((err) => console.error(err));
   }, []);
@@ -79,7 +80,7 @@ export default function MenuList() {
           }; */
           return (
             <>
-              <MenuWrap /*onClick={onAdd}*/ key={menu.id} id={menu.id}>
+              <MenuWrap /*onClick={onAdd}*/ key="{menu}" id={menu.id}>
                 <img
                   style={{ width: "43px", height: "61px" }}
                   src={Americano}

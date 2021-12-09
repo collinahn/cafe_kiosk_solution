@@ -15,10 +15,10 @@ export default function SimpleSlider({ menuArray }) {
     <div>
       <StyledSlider {...settings}>
         {menuArray.length > 0 ? (
-          menuArray.map((menu, idx) => (
+          menuArray.map((menu) => (
             <>
-              <SliderWrap key={idx}>
-                <WordsWrap key={idx}>{menu.itemName}</WordsWrap>
+              <SliderWrap key="{menu}">
+                <WordsWrap>{menu.itemName}</WordsWrap>
               </SliderWrap>
             </>
           ))

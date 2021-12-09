@@ -35,7 +35,12 @@ export default function AddMenu() {
             url: thumbnail,
             init: true,
           },
-          { withCredentials: true }
+          { withCredentials: true },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         )
         .then((response) => {
           console.log(response);
@@ -46,7 +51,7 @@ export default function AddMenu() {
           alert("Error!");
           console.error(err);
         });
-      alert("등록되었습니다");
+      // alert("등록되었습니다");
       setDisabled(false);
       setShowPopupMenu(false);
     } else {
@@ -76,7 +81,7 @@ export default function AddMenu() {
                 placeholder="상품명"
               />
               <Input
-                type="number"
+                type="text"
                 onChange={onChangeItemCode}
                 placeholder="상품코드"
               />

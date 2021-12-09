@@ -11,8 +11,12 @@ export default function OrderedList() {
   useEffect(() => {
     axios.get("/staff").then((res) => {
       setOrderedArray(res.data.queue);
-      console.log(res.data.queue);
+      setDetails(res.data.queue.orderDetails);
+      // console.log(Object.entries(res.data.queue.orderDetails));
+      // setDetails(Object.entries(res.data.queue.orderDetails));
+      console.log(res.data);
       console.log("성공");
+      console.log(details);
     });
   }, []);
 
@@ -38,7 +42,13 @@ export default function OrderedList() {
               <List>
                 <Ordereddiv>&nbsp;주문 순서 : {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderDetails}
+                  &nbsp;주문 내역 :
+                  {Object.entries(ordered.orderDetails).map(([key, value]) => (
+                    <span>
+                      {key} * {value}EA
+                      {", "}
+                    </span>
+                  ))}
                 </Ordereddiv>
                 {/* <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv> */}
               </List>
@@ -53,11 +63,16 @@ export default function OrderedList() {
             <ToggledBackgroundWrap>
               <ToggleWrap>
                 <br />
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderedNo}</Ordereddiv>
+                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
-                  &nbsp;주문 내역 : {ordered.orderedItems}
+                  &nbsp;주문 내역 :{" "}
+                  {Object.entries(ordered.orderDetails).map(([key, value]) => (
+                    <span>
+                      {key}: {value}{" "}
+                    </span>
+                  ))}
                 </Ordereddiv>
-                <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv>
+                {/* <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv> */}
                 <br />
                 <br />
                 <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
