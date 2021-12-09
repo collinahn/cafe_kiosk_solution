@@ -39,9 +39,11 @@ api = Api(
     validate=True # 파라미터 검증
 ) #api정보입력
 
-# enable CORS
+# enable CORS 및 json 관련
 app.config['CORS_SUPPORTS_CREDENTIALS'] = True
-cors = CORS(app, origins=['*', '*'], allow_headers=['*', '*'], expose_headers=['content-type', '*'])
+cors = CORS(app) #, origins=['*', '*'], allow_headers=['*', '*'], expose_headers=['content-type', '*'])
+app.config['JSON_AS_ASCII'] = False
+
 
 # 내부 로직이 가동되기 전에 초기화한다
 initialize_distributed_kiosk_system()
@@ -52,6 +54,16 @@ api.add_namespace(Admin, '/admin')
 api.add_namespace(Auth, '/auth')
 api.add_namespace(Order, '/order')
 api.add_namespace(Staff, '/staff')
+
+# CORS 헤더 관련 설정
+@app.after_request
+def after_request(response):
+    # response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    # response.headers.add('Access-Control-Allow-Credentials', 'true')
+    return response
+
 
 # 콘솔에서 디버깅할 수 있도록 하는 도구
 Thread(target=debug_console, daemon=False).start()

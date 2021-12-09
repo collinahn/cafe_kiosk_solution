@@ -37,29 +37,34 @@ post_admin_body = Admin.model('Resource-Admin', {
 @Admin.route('/')
 class CAdmin(Resource):
 
-    # @jwt_required
+    @jwt_required()
     @Admin.expect(post_admin_body)
     @Admin.response(200, 'success')
     @Admin.response(412, 'insufficent body')
     @Admin.doc(body=post_admin_body)
     def post(self):
         dct_Input: dict = request.get_json()
+        log.CRITICAL(dct_Input)
 
-        if not utils.check_params(dct_Input, post_admin_body.keys(), sExcept='init'):
+        if not utils.check_params(dct_Input, ('data', )):
             return make_response(jsonify(const.SUCCESS_FALSE_RESPONSE), 412) # insufficient body
 
+        if not utils.check_params(dct_Input['data'], post_admin_body.keys(), sExcept='init'):
+            return make_response(jsonify(const.SUCCESS_FALSE_RESPONSE), 412) # insufficient body
+        
+
         if not cls_DB.add_items((
-            dct_Input['code'],
-            dct_Input['name'],
-            dct_Input['category'],
-            dct_Input['price'],
-            dct_Input['time'],
-            1 if dct_Input['avail'] else 0,
-            dct_Input['url']
+            dct_Input['data']['code'],
+            dct_Input['data']['name'],
+            dct_Input['data']['category'],
+            dct_Input['data']['price'],
+            dct_Input['data']['time'],
+            1 if dct_Input['data']['avail'] else 0,
+            dct_Input['data']['url']
         )):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
 
-        if not utils.check_params(dct_Input, ('init',)) and dct_Input['init']:
+        if utils.check_params(dct_Input['data'], ('init',)) and dct_Input['data']['init']:
             cls_If.lazy_init()
             cls_If.lazy_init_item_list() # 즉시 초기화
 
