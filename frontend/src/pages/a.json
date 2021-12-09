@@ -1,0 +1,29 @@
+{
+  "classification": ["cake", "drink", "alcohol"],
+  "data": [
+    {
+      "avail": true,
+      "itemClass": "cake",
+      "itemCode": "cake001",
+      "itemName": "Cake",
+      "itemPrice": 15000,
+      "thumbnail": "/"
+    },
+    {
+      "avail": true,
+      "itemClass": "drink",
+      "itemCode": "drink001",
+      "itemName": "Drink",
+      "itemPrice": 4000,
+      "thumbnail": "/"
+    },
+    {
+      "avail": true,
+      "itemClass": "alcohol",
+      "itemCode": "alcohol001",
+      "itemName": "Alcohol",
+      "itemPrice": 120000,
+      "thumbnail": "/"
+    }
+  ]
+}
