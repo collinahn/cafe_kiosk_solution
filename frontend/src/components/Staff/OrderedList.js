@@ -48,7 +48,7 @@ export default function OrderedList() {
                     </DictDiv>
                   ))}
                 </Ordereddiv>
-                {/* <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv> */}
+                <Ordereddiv>&nbsp;주문 시간 : {ordered.time}</Ordereddiv>
               </List>
               <span>
                 <Okbutton onClick={okSubmit}>승낙하기</Okbutton>
