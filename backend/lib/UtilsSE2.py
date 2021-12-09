@@ -6,7 +6,6 @@
 #                                api에서 사용하기위한 함수 (to_json, to_str) 추가
 
 from datetime import datetime
-from typing import final
 
 from backend.lib.LoggerSE2 import Logger
 
@@ -15,6 +14,9 @@ from backend.lib.LoggerSE2 import Logger
 #YYYMMDD 형식으로 날짜 구한다 "20211126"
 def get_today_YMD():
     return datetime.now().strftime("%Y%m%d")
+
+def get_time_HMS():
+    return datetime.now().strftime("%m-%d %H:%M:%S")
 
 def to_int(sData: str, sDebugData: str=None):
     try:
