@@ -9,10 +9,10 @@
 #
 
 
-from os import path
+import backend.lib.constantsSE2 as const
+import backend.lib.UtilsSE2 as utils
 from backend.lib.Items import Items4Order
 from backend.lib.LoggerSE2 import Logger
-import backend.lib.constantsSE2 as const
 
 
 class SingleOrder(object):
@@ -22,6 +22,7 @@ class SingleOrder(object):
 
         self.__n_OrderSeq: int = nOrderSeq
         self.tpl_OrderList: tuple = tplOrder
+        self.__s_OrderTime: str = utils.get_time_HMS()
 
         self._in_Time = self._time
         self.logger.INFO(f"SingleOrder {nOrderSeq} init, {self.time=}")
@@ -69,6 +70,7 @@ class SingleOrder(object):
         return {
             "orderCode":self.order_to_string,
             "orderDetails":self.details_json,
+            "time":self.__s_OrderTime,
         } # json 만들 때 사용함
 
 
