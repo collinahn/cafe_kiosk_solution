@@ -53,14 +53,22 @@ class SingleOrder(object):
         dct_Ret: dict = {}
         if self.tpl_OrderList:
             for target in self.tpl_OrderList:
+                dct_Ret[target.item.code]=target.quantity
+        return dct_Ret # DB
+
+    @property 
+    def details_json(self) -> dict:
+        dct_Ret: dict = {}
+        if self.tpl_OrderList:
+            for target in self.tpl_OrderList:
                 dct_Ret[target.item.name]=target.quantity
-        return dct_Ret # DB 및 json { "item01":1, "item02":3, ... }
+        return dct_Ret # json { "item01":1, "item02":3, ... }
 
     @property
     def simplify(self) -> dict:
         return {
             "orderCode":self.order_to_string,
-            "orderDetails":self.details,
+            "orderDetails":self.details_json,
         } # json 만들 때 사용함
 
 
