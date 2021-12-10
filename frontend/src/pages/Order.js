@@ -17,6 +17,10 @@ export default function Order({ location }) {
     console.log("location.props: ", location.props);
   });
 
+  const onClickAddQuantity = (params) => {
+    params.itemPrice = params.itemPrice + params.itemPrice / params.quantity;
+  };
+
   const onSubmit = () => {
     try {
       let array = {};
@@ -67,24 +71,21 @@ export default function Order({ location }) {
                   alt={menu.itemName}
                 />
                 <MenuNameWrap>{menu.itemName}</MenuNameWrap>
-                <MenuNameWrap>{menu.itemPrice}</MenuNameWrap>
+                <MenuNameWrap>{menu.itemPrice / menu.quantity}</MenuNameWrap>
               </MenuWrap>
-
               <CountWrap>
                 <Button>-</Button>
                 <Result>{menu.quantity}</Result>
-                <Button>+</Button>
+                <Button onClick={() => onClickAddQuantity(menu)}>+</Button>
               </CountWrap>
-
               <TotalWrap>
                 <MenuNameWrap>{menu.itemPrice}</MenuNameWrap>
               </TotalWrap>
             </MenuBox>
           </>
         ))}
-        <UnderBarWrap>총주문금액: {sum} </UnderBarWrap>
       </MenuListWrap>
-
+      <UnderBarWrap>총주문금액: {sum} </UnderBarWrap>
       <ButtonWrap>
         <SubmitBtnWrap onClick={onSubmit}>
           <PayButtonWrap>카드로 결제하기</PayButtonWrap>
@@ -127,6 +128,13 @@ const UnderBarWrap = styled.div`
 `;
 
 const MenuListWrap = styled.div`
+  height: 416px;
+  overflow: scroll;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
   padding-top: 3px;
   padding-left: 0px;
   flex-direction: column;
