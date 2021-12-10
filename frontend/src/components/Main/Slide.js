@@ -18,7 +18,11 @@ export default function SimpleSlider({ menuArray }) {
           menuArray.map((menu, idx) => (
             <>
               <SliderWrap key={idx}>
-                <WordsWrap key={idx}>{menu.itemName}</WordsWrap>
+                <WordsWrap key={idx}>
+                  {menu.itemName}
+                  <br />
+                </WordsWrap>
+                <WordsWrap>{menu.quantity} * EA</WordsWrap>
               </SliderWrap>
             </>
           ))
@@ -54,10 +58,10 @@ const EmptyWrap = styled.div`
 const SliderWrap = styled.div`
   height: 88px;
   background-color: #c7c7dd;
-  display: flex;
-  justify-content: center;
 `;
 
 const WordsWrap = styled.p`
-  margin-top: 25px;
+  margin: 0;
+  padding-top: 10px;
+  text-align: center;
 `;
