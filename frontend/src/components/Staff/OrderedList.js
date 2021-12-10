@@ -7,7 +7,6 @@ axios.defaults.baseURL = "http://127.0.0.1:5000";
 
 export default function OrderedList() {
   const [OrderedArray, setOrderedArray] = useState([]);
-
   useEffect(() => {
     axios.get("/staff/").then((res) => {
       console.log(res);
@@ -19,24 +18,58 @@ export default function OrderedList() {
 
   const [confirmed, setConfirmed] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [inputs, setInputs] = useState({
+    orderCode: "",
+    orderDetails: "",
+    time: "",
+  });
+
+  const onChange = (e) => {
+    const { name, value } = e.target;
+
+    setInputs({
+      ...inputs,
+      [name]: value,
+    });
+  };
 
   const togglePopup = () => {
     showPopup ? setShowPopup(false) : setShowPopup(true);
   };
 
-  const okSubmit = (id) => {
-    setConfirmed(true);
+  const onClickSubmit = (id) => {
+    axios
+      .post("/staff/", { orderCode: id, status: 2000 })
+      .then((res) => {
+        console.log(res);
+        console.log("승낙했습니다");
+        alert("승낙했습니다.");
+      })
+      .catch((e) => console.error(e))
+      .finally(console.log("주문 송신 프로세스 종료"));
   };
-  const noSubmit = () => {
-    setShowPopup(true);
+  const onClickCancel = (id) => {
+    axios
+      .post("/staff/", { orderCode: id, status: 4000 })
+      .then((res) => {
+        console.log(res);
+        console.log("취소했습니다.");
+        alert("취소가 완료되었습니다.");
+        setShowPopup(false);
+      })
+      .catch((e) => console.error(e))
+      .finally(console.log("주문 취소 프로세스 종료"));
+    // console.log(id);
+    // setOrderedArray(OrderedArray.filter((order) => order.id !== id));
+    // console.log(OrderedArray);
   };
   return (
     <>
-      {OrderedArray.map((ordered) => (
+      {OrderedArray.map((ordered, idx) => (
         <>
           {!ordered.orderConfirmed && (
             <>
-              <List>
+              <List id={idx}>
                 <Ordereddiv>&nbsp;주문 순서: {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
                   &nbsp;주문 내역
@@ -51,8 +84,10 @@ export default function OrderedList() {
                 <Ordereddiv>&nbsp;주문 시간 : {ordered.time}</Ordereddiv>
               </List>
               <span>
-                <Okbutton onClick={okSubmit}>승낙하기</Okbutton>
-                <Nobutton onClick={noSubmit}>취소하기</Nobutton>
+                <Okbutton onClick={() => onClickSubmit(ordered.orderCode)}>
+                  완료하기
+                </Okbutton>
+                <Nobutton onClick={() => setShowPopup(true)}>취소하기</Nobutton>
               </span>
               <div>&nbsp;</div>
             </>
@@ -61,26 +96,30 @@ export default function OrderedList() {
             <ToggledBackgroundWrap>
               <ToggleWrap>
                 <br />
-                <Ordereddiv>&nbsp;주문 순서 : {ordered.orderCode}</Ordereddiv>
+                <Ordereddiv>&nbsp;주문 순서: {ordered.orderCode}</Ordereddiv>
                 <Ordereddiv>
-                  &nbsp;주문 내역 :{" "}
+                  &nbsp;주문 내역
+                  <br />
                   {Object.entries(ordered.orderDetails).map(([key, value]) => (
-                    <span>
-                      {key} * {value}EA,{"   "}
-                    </span>
+                    <DictDiv>
+                      <div>{key}</div>
+                      <ValueDiv>{value}EA</ValueDiv>
+                    </DictDiv>
                   ))}
                 </Ordereddiv>
-                <Ordereddiv>&nbsp;주문 시간 : {ordered.orderedTime}</Ordereddiv>
+                <Ordereddiv>&nbsp;주문 시간 : {ordered.time}</Ordereddiv>
                 <br />
                 <br />
                 <Askingdiv>정말 취소하시겠습니까?</Askingdiv>
                 <br />
-                <span>
-                  <ReadyButtonWrap /*onClick ={배열에서삭제}*/>
+                <ButtonWrap>
+                  <ReadyButtonWrap
+                    onClick={() => onClickCancel(ordered.orderCode)}
+                  >
                     Y
                   </ReadyButtonWrap>
                   <CancelButtonWrap onClick={togglePopup}>N</CancelButtonWrap>
-                </span>
+                </ButtonWrap>
                 <br />
               </ToggleWrap>
             </ToggledBackgroundWrap>
@@ -90,6 +129,10 @@ export default function OrderedList() {
     </>
   );
 }
+
+const ButtonWrap = styled.div`
+  text-align: center;
+`;
 
 const ValueDiv = styled.div`
   padding-left: 10px;
@@ -103,6 +146,7 @@ const DictDiv = styled.div`
 
 const List = styled.div`
   background-color: lightgray;
+  padding-top: 5px;
 `;
 
 const Ordereddiv = styled.div`
@@ -113,7 +157,7 @@ const Ordereddiv = styled.div`
 const Askingdiv = styled.div`
   text-shadow: 1px 0px 1px #493e3e;
   font-size: 20;
-  text_align: center;
+  text-align: center;
 `;
 
 const Okbutton = styled.button`
@@ -121,7 +165,7 @@ const Okbutton = styled.button`
   height: 30px;
   background-color: black;
   color: white;
-  text_align: center;
+  text-align: center;
   border: 1px solid black;
   font-weight: bold;
   border-radius: 1px;
@@ -132,7 +176,7 @@ const Nobutton = styled.button`
   height: 30px;
   background-color: white;
   color: black;
-  text_align: center;
+  text-align: center;
   font-weight: bold;
   border: 1px solid black;
   border-radius: 1px;
@@ -154,8 +198,6 @@ const ToggleWrap = styled.div`
   z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 `;
 const CancelButtonWrap = styled.button`
   background-color: #202070;
