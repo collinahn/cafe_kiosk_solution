@@ -7,7 +7,6 @@ import Login from "./pages/Login";
 import Complete from "./pages/Complete";
 import Order from "./pages/Order";
 import Staff from "./pages/Staff";
-import Ready from "./pages/Ready";
 import AuthRoute from "./components/Auth/AuthRoute";
 import StaffLogin from "./pages/StaffLogin";
 
@@ -22,7 +21,6 @@ export default function App() {
       <Route path="/order" component={Order} />
       <Route exact path="/StaffLogin" component={StaffLogin} />
       <Route path="/Staff" component={Staff} />
-      <Route path="/Ready" component={Ready} />
     </div>
   );
 }
