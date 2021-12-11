@@ -23,21 +23,4 @@ export default function AuthRoute({ version, component: Component, ...rest }) {
       />
     );
   }
-  // Show the component only when the user is logged in
-  // Otherwise, redirect the user to /signin page
-  // <Route
-  //   {...rest}
-  //   render={
-  //     (props) => {
-  //       if (Component) {
-  //         return <Component {...props} />;
-  //       }
-  //       if (!isLogin) {
-  //         return <Redirect to="/login" />;
-  //       }
-  //       return null;
-  //     }
-  //     // isLogin() ? <Component {...props} /> : <Redirect to="/login" />
-  //   }
-  // />
 }
