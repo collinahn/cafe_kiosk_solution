@@ -11,20 +11,43 @@ axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://127.0.0.1:5000";
 
 export default function MenuList() {
+  let [targetArray, setTargetArray] = useState([]);
   const [classification, setClassification] = useState([]);
-  const [APImenu, setAPImenu] = useState([]);
+  const [coffeeList, setCoffeeList] = useState([]);
+  const [brunchList, setBrunchList] = useState([]);
+  const [drinkList, setDrinkList] = useState([]);
+  const [dessertList, setDessertList] = useState([]);
+
   // API에서 값 받아오기
   useEffect(() => {
     axios
       .get("/start/v1")
       .then((res) => {
-        setAPImenu(res.data.data);
-        setClassification(res.data.classification);
-        console.log("불러오기 성공");
         console.log(res.data);
+        setCoffeeList(
+          res.data.data.filter((menu) => {
+            return menu.itemClass === "커피";
+          })
+        );
+        setDessertList(
+          res.data.data.filter((menu) => {
+            return menu.itemClass === "디저트";
+          })
+        );
+        setBrunchList(
+          res.data.data.filter((menu) => {
+            return menu.itemClass === "브런치";
+          })
+        );
+        setDrinkList(
+          res.data.data.filter((menu) => {
+            return menu.itemClass === "음료";
+          })
+        );
+        setClassification(res.data.classification);
       })
       .catch((err) => console.error(err))
-      .finally(console.log(APImenu));
+      .finally();
   }, []);
 
   const [cart, setCart] = useState([]);
@@ -61,40 +84,26 @@ export default function MenuList() {
     sum = sum + cart[i].itemPrice;
   }
 
-  const BrunchList = APImenu.filter((data) => {
-    return data.itemClass === "브런치";
-  });
+  // console.log("CoffeeList", CoffeeList);
 
-  const DeesertList = APImenu.filter((data) => {
-    return data.itemClass === "디저트";
-  });
-
-  const CoffeeList = APImenu.filter((data) => {
-    return data.itemClass === "커피";
-  });
-
-  const DrinkList = APImenu.filter((data) => {
-    return data.itemClass === "음료";
-  });
-
-  let [targetArray, setTargetArray] = useState([]);
-  console.log(targetArray);
   useEffect(() => {
-    setTargetArray(CoffeeList);
-  }, []);
+    if (dessertList.length > 0) {
+      setTargetArray(dessertList);
+      console.log("성공!!!");
+    } else {
+      console.log("비어있어요 ㅜ");
+    }
+  }, [dessertList]);
 
-  console.log("CoffeeList", CoffeeList);
-  console.log("targetArray", targetArray);
   const handleButtonClick = (e) => {
-    console.log(e.target.value);
     if (e.target.value === "브런치") {
-      setTargetArray(BrunchList);
+      setTargetArray(brunchList);
     } else if (e.target.value === "디저트") {
-      setTargetArray(DeesertList);
+      setTargetArray(dessertList);
     } else if (e.target.value === "커피") {
-      setTargetArray(CoffeeList);
+      setTargetArray(coffeeList);
     } else if (e.target.value === "음료") {
-      setTargetArray(DrinkList);
+      setTargetArray(drinkList);
     }
   };
 
@@ -109,7 +118,7 @@ export default function MenuList() {
                 name="menu"
                 value={menu}
                 id="menu"
-                defaultChecked={menu === "커피"}
+                defaultChecked={menu === "디저트"}
                 onChange={handleButtonClick}
               ></InputWrap>
               <ButtonWrap>{menu}</ButtonWrap>
@@ -118,7 +127,6 @@ export default function MenuList() {
         })}
       </TitleWrap>
       <MenuListWrap>
-        {/* avail, itemClass, itemCode, itemName, itemPrice, thumbnail */}
         {targetArray.map((menu) => {
           const { thumbnail, itemName, itemPrice, itemCode, itemClass } = menu;
           const onAdd = () => {
