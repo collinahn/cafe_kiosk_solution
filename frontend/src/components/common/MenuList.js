@@ -22,7 +22,6 @@ export default function MenuList() {
         setClassification(res.data.classification);
         console.log("불러오기 성공");
         console.log(res.data);
-        console.log(APImenu);
       })
       .catch((err) => console.error(err))
       .finally(console.log(APImenu));
@@ -78,8 +77,14 @@ export default function MenuList() {
     return data.itemClass === "음료";
   });
 
-  let [targetArray, setTargetArray] = useState(BrunchList);
+  let [targetArray, setTargetArray] = useState([]);
+  console.log(targetArray);
+  useEffect(() => {
+    setTargetArray(CoffeeList);
+  }, []);
 
+  console.log("CoffeeList", CoffeeList);
+  console.log("targetArray", targetArray);
   const handleButtonClick = (e) => {
     console.log(e.target.value);
     if (e.target.value === "브런치") {
@@ -104,6 +109,7 @@ export default function MenuList() {
                 name="menu"
                 value={menu}
                 id="menu"
+                defaultChecked={menu === "커피"}
                 onChange={handleButtonClick}
               ></InputWrap>
               <ButtonWrap>{menu}</ButtonWrap>
