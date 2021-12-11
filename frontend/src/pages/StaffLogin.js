@@ -22,10 +22,11 @@ export default function Login({ props, name }) {
           },
         })
         .then((res) => {
-          console.log(JSON.stringify(res));
-          console.log("res.data.accessToken : " + res.data);
-          console.log(res.data);
-          axios.defaults.headers.common["Authorization"] = "Bearer " + res.data;
+          console.log(res);
+          console.log("res.data.accessToken : " + res.data.jwt_token);
+          localStorage.setItem("token2", res.data.jwt_token);
+          axios.defaults.headers.common["Authorization"] =
+            "Bearer " + res.data.jwt_token;
           history.push("/staff");
         })
         .catch((ex) => {
@@ -38,7 +39,9 @@ export default function Login({ props, name }) {
   };
 
   useEffect(() => {
-    console.log("LoginPage render ...");
+    console.log("StaffLogin Page render ...");
+    localStorage.setItem("token1", "");
+    localStorage.setItem("token2", "");
   }, []);
 
   const onIdHandler = (event) => {
@@ -61,7 +64,7 @@ export default function Login({ props, name }) {
         <NameWrap>
           ABC COFFEE-
           <br />
-          &nbsp;&nbsp;&nbsp;&nbsp;manager
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Staff
         </NameWrap>
       </TitleWrap>
       <LoginWrap>

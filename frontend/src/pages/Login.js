@@ -6,7 +6,7 @@ import axios from "axios";
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = "http://127.0.0.1:5000";
-export default function Login({ props, name }) {
+export default function Login() {
   const history = useHistory();
   const [Id, setId] = useState("");
   const [Password, setPassword] = useState("");
@@ -22,10 +22,11 @@ export default function Login({ props, name }) {
           },
         })
         .then((res) => {
-          console.log(JSON.stringify(res));
-          console.log("res.data.accessToken : " + res.data);
-          console.log(res.data);
-          axios.defaults.headers.common["Authorization"] = "Bearer " + res.data;
+          console.log(res);
+          console.log("res.data.accessToken : " + res.data.jwt_token);
+          localStorage.setItem("token1", res.data.jwt_token);
+          axios.defaults.headers.common["Authorization"] =
+            "Bearer " + res.data.jwt_token;
           history.push("/manager");
         })
         .catch((ex) => {
@@ -39,6 +40,8 @@ export default function Login({ props, name }) {
 
   useEffect(() => {
     console.log("LoginPage render ...");
+    localStorage.setItem("token1", "");
+    localStorage.setItem("token2", "");
   }, []);
 
   const onIdHandler = (event) => {
