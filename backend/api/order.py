@@ -76,7 +76,7 @@ class COrderCode(Resource):
         b_CnlRequest = dct_Input['isCancel']
 
         #주문서에 주문 번호가 없음
-        if not utils.to_int(orderCode):
+        if not cls_Q.check_order(int(orderCode)):
             return jsonify(const.SUCCESS_FALSE_RESPONSE)
         
         if b_CnlRequest:
