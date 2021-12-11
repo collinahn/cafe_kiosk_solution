@@ -74,9 +74,7 @@ export default function Order({ location }) {
                 <MenuNameWrap>{menu.itemPrice / menu.quantity}</MenuNameWrap>
               </MenuWrap>
               <CountWrap>
-                <Button>-</Button>
-                <Result>{menu.quantity}</Result>
-                <Button onClick={() => onClickAddQuantity(menu)}>+</Button>
+                <Result>{menu.quantity}EA</Result>
               </CountWrap>
               <TotalWrap>
                 <MenuNameWrap>{menu.itemPrice}</MenuNameWrap>
@@ -134,7 +132,6 @@ const MenuListWrap = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
-
   padding-top: 3px;
   padding-left: 0px;
   flex-direction: column;
@@ -166,21 +163,11 @@ const CountWrap = styled.p`
   margin-top: 40px;
   margin-bottom: 46px;
   font-size: 15px;
-  background-color: white;
-`;
-
-const Button = styled.button`
-  width: 24px;
-  height: 24px;
-  font-weight: bold;
-  border: 1.5px solid black;
-  background-color: white;
 `;
 
 const Result = styled.div`
-  border-top: 1.5px solid black;
-  border-bottom: 1.5px solid black;
   width: 24px;
+  padding: 0 40px 0 20px;
   text-align: center;
 `;
 
