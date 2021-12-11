@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import useInput from "../../Hooks/useInput";
+
 import axios from "axios";
 
 let pwd = "1234";
@@ -40,7 +41,7 @@ export default function AddMenu() {
               price: itemPrice,
               time: finishTime,
               avail: true,
-              url: thumbnail,
+              url: "img/default.svg",
               init: true,
             },
           },
@@ -62,7 +63,6 @@ export default function AddMenu() {
       setDisabled(false);
     }
   };
-  // [Itemname, itemCode, itemPrice, category, time, password]
 
   const togglePopup = () => {
     if (showPopupMenu) {
@@ -103,14 +103,12 @@ export default function AddMenu() {
                 onChange={onChangeFinishTime}
                 placeholder="예상완료 시간(분)"
               />
-              <br />
-              {/* <LabelForInput htmlFor="thumbnails">사진 업로드</LabelForInput> */}
-              <br />
+
               <input
                 type="file"
                 name="thumbnail"
                 id="thumbnails"
-                // style={{ display: "none" }}
+                style={{ textAlignLast: "center", margin: "auto" }}
                 onChange={onChangeThumbnail}
               />
               <Input
@@ -211,14 +209,6 @@ const ErrorMessageWrap = styled.div`
   font-weight: 400;
 `;
 
-const LabelForInput = styled.label`
-  padding: 5px 10px;
-  background-color: #ff6600;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-`;
-
 const Input = styled.input`
   width: 183px;
   height: 32px;
@@ -266,30 +256,3 @@ const ToggleWrap = styled.div`
   border: 5px solid #383843;
   z-index: 1;
 `;
-
-// const AddMenuWrap = styled.div`
-//   padding-top: 15px;
-//   display: flex;
-//   flex-wrap: wrap;
-//   justify-content: center;
-//   border: 2px solid black;
-//   border-top: none;
-//   border-bottom: none;
-// `;
-
-// const EmptyMenuWrap = styled.div`
-//   width: 86px;
-//   height: 81px;
-//   background-color: #f6f6ff;
-//   border: 1px solid #493e3e;
-//   box-shadow: inset 0px 3px 3px #aaa;
-//   border-radius: 10px;
-//   text-align: center;
-//   margin: 0 3px 15px 3px;
-// `;
-
-// const EmptyMenuItemNameWrap = styled.p`
-//   font-weight: bold;
-//   font-size: 24px;
-//   margin-top: 27px;
-// `;
